@@ -15,3 +15,5 @@ You can run the program with the following command:
 
 To know about the options run the command:
 `python chat_analyzer --help`
+
+*NOTE - This program has only been tested on Python3
