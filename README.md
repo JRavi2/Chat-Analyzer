@@ -11,7 +11,7 @@ It also allows the user to add some date constraints
 ## How to Run
 
 You can run the program with the following command: 
-`python chat_analyzer <path_to_chatfile> <options>`
+`python chat_analyzer <options> <path_to_chatfile>`
 
 To know about the options run the command:
 `python chat_analyzer --help`
