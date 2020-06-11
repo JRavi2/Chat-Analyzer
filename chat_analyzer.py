@@ -19,7 +19,6 @@ def find_msg_count(chatfile, start_date=None, end_date=None):
         match = re.search(Msg, line)
         if match:
             matched_date = datetime.strptime(match.groupdict()['date'], '%m/%d/%y').date()
-            # print(matched_user, matched_date)
             if not start_date or (start_date and start_date < matched_date < end_date):
                 count += 1
     file.close()
