@@ -66,6 +66,8 @@ def find_conv_starters(path_to_chatfile, username=None):
     total_diff = 0
     count = 1
     last_msg = None
+
+    # Get the firet message that was sent in the chat
     m = None
     while not m:
         m = re.match(Msg, file.readline())
@@ -79,6 +81,10 @@ def find_conv_starters(path_to_chatfile, username=None):
             if difference != 0:
                 total_diff += difference
                 average = total_diff / count
+                ''' 
+                If the difference in time between current message and the last message is more than the average difference 
+                then that would mean that the current message is a conversation starter 
+                '''
                 if difference > average:
                     user_count[m.groupdict()['username']] = user_count[m.groupdict()['username']] + 1 if m.groupdict()['username'] in user_count else 1
                     total_diff = 0
