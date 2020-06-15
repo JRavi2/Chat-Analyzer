@@ -6,7 +6,7 @@ from datetime import datetime
 # Define Regex Patterns
 User = '(- (?P<username>[^:]*):)' # To get the user's name
 Date = '(?P<date>(?P<month>[0-9]{1,2})[-|\/]{1}(?P<day>[0-9]{1,2})[-|\/]{1}(?P<year>[0-9]{2}))' # To get the date
-Time = '(, (?P<time>[0-9]{2}:[0-9]{2}) )' # To get the time
+Time = '(, (?P<time>(?P<hour>[0-9]{2}):(?P<minute>[0-9]{2})) )' # To get the time
 DateTime = Date + Time # To get the date and time combined (Don't know why I added this, probably never gonna use it :w:P)
 Msg = Date + Time + User + '(?P<message>.*)' # Finally to get the parsed message
 
@@ -100,6 +100,47 @@ def find_conv_starters(path_to_chatfile, username=None):
             print("The user {} started consversation {} time(s)".format(user, count))
 
 
+# Get the time of the day when each user(or a particular user) is most active
+def check_activity(path_to_chatfile, username=None, start_date=None, end_date=None):
+    file = open(path_to_chatfile, 'r')
+    '''
+    prototype for the user_count variable
+    user_count = {
+        <username> : {
+            <hour> : <frequency>
+        }
+    }
+    '''
+    user_count = {}
+    for line in file:
+        match = re.search(Msg, line)
+        if match:
+            matched_user = match.groupdict()['username']
+            matched_hour = match.groupdict()['hour']
+            matched_date = datetime.strptime(match.groupdict()['date'], '%m/%d/%y').date()
+            if not start_date or (start_date and start_date < matched_date < end_date):
+                if matched_user not in user_count:
+                    user_count[matched_user] = {}
+                user_count[matched_user][matched_hour] = user_count[matched_user][matched_hour] + 1 if matched_hour in user_count[matched_user] else 1
+    
+    for user in user_count:
+        max_freq = 0
+        max_freq_hour = '00'
+        for hour in user_count[user]:
+            if user_count[user][hour] > max_freq:
+                max_freq = user_count[user][hour]
+                max_freq_hour = hour
+        user_count[user]['max'] = max_freq_hour
+    
+
+    if username:
+        print("The user {} mostly stays active around {} Hours".format(username, user_count[username]['max']))
+    else:
+        for user in user_count:
+            print("The user {} mostly stays active around {} Hours".format(user, user_count[user]['max']))
+    file.close()
+
+
 # Add all the command line parameters
 @click.command()
 @click.argument('path_to_chatfile')
@@ -107,7 +148,8 @@ def find_conv_starters(path_to_chatfile, username=None):
 @click.option('-cS', '--conv-starters', is_flag=True, help='Get the frequecy at which each person has started the conversation')
 @click.option('-u', '--username', nargs=1, type=str, help='Show results for a particular User only (Provide the username)')
 @click.option('-c', '--constraint', nargs=2, type=str, help='Add date Constraints (format - mm/dd/yy)')
-def controller(path_to_chatfile, username, percentage, constraint, conv_starters):
+@click.option('-a', '--activity', is_flag=True, help='SHow activity')
+def controller(path_to_chatfile, username, percentage, constraint, conv_starters, activity):
     if constraint:
         start_date = datetime.strptime(constraint[0], '%m/%d/%y').date()
         end_date = datetime.strptime(constraint[1], '%m/%d/%y').date()
@@ -118,6 +160,8 @@ def controller(path_to_chatfile, username, percentage, constraint, conv_starters
         find_conv_starters(path_to_chatfile, username)
     if percentage:
         calc_percentage(path_to_chatfile, username, start_date, end_date)
+    if activity:
+        check_activity(path_to_chatfile, username, start_date, end_date)
 
 
 if __name__ == '__main__':
