@@ -3,16 +3,20 @@ import re
 from datetime import datetime
 
 
-# Define Regex Patterns
+''' 
+Define Regex Patterns
+'''
 User = '(- (?P<username>[^:]*):)' # To get the user's name
 Date = '(?P<date>(?P<month>[0-9]{1,2})[-|\/]{1}(?P<day>[0-9]{1,2})[-|\/]{1}(?P<year>[0-9]{2}))' # To get the date
 Time = '(, (?P<time>(?P<hour>[0-9]{2}):(?P<minute>[0-9]{2})) )' # To get the time
-DateTime = Date + Time # To get the date and time combined (Don't know why I added this, probably never gonna use it :w:P)
+DateTime = Date + Time # To get the date and time combined (Don't know why I added this, probably never gonna use it :P)
 Msg = Date + Time + User + '(?P<message>.*)' # Finally to get the parsed message
 
 
-# Find the number of messages
 def find_msg_count(chatfile, start_date=None, end_date=None):
+    ''' 
+    Find the number of messages
+    '''
     file = open(chatfile, "r")
     count = 0
     for line in file:
@@ -25,8 +29,10 @@ def find_msg_count(chatfile, start_date=None, end_date=None):
     return count
 
 
-# Find the frequecy at which a given users messages
 def find_freq(chatfile, username=None, start_date=None, end_date=None):
+    '''
+    Find the frequecy at which a given users messages
+    '''
     file = open(chatfile, 'r')
     user_count = {}
     for line in file:
@@ -43,8 +49,10 @@ def find_freq(chatfile, username=None, start_date=None, end_date=None):
         return user_count
 
 
-# Calc the metrics of how much the entered user has spoken in the chat within the given constraint(if provided)
 def calc_percentage(path_to_chatfile, username=None, start_date=None, end_date=None):
+    '''
+    Calc the metrics of how much the entered user has spoken in the chat within the given constraint(if provided)
+    '''
     user_count = find_freq(path_to_chatfile, username, start_date, end_date)
     total_count = find_msg_count(path_to_chatfile, start_date, end_date)
 
@@ -60,14 +68,16 @@ def calc_percentage(path_to_chatfile, username=None, start_date=None, end_date=N
             print("Percentage: {}\n".format(count/total_count*100))
 
 
-# Find out who has started a conversations how many times
 def find_conv_starters(path_to_chatfile, username=None):
+    '''
+    Find out who has started a conversations how many times
+    '''
     file = open(path_to_chatfile, 'r')
     total_diff = 0
     count = 1
     last_msg = None
 
-    # Get the firet message that was sent in the chat
+    # Get the first message that was sent in the chat
     m = None
     while not m:
         m = re.match(Msg, file.readline())
@@ -100,11 +110,13 @@ def find_conv_starters(path_to_chatfile, username=None):
             print("The user {} started consversation {} time(s)".format(user, count))
 
 
-# Get the time of the day when each user(or a particular user) is most active
 def check_activity(path_to_chatfile, username=None, start_date=None, end_date=None):
+    '''
+    Get the time of the day when each user(or a particular user) is most active
+    '''
     file = open(path_to_chatfile, 'r')
     '''
-    prototype for the user_count variable
+    Prototype for the user_count variable
     user_count = {
         <username> : {
             <hour> : <frequency>
@@ -141,14 +153,16 @@ def check_activity(path_to_chatfile, username=None, start_date=None, end_date=No
     file.close()
 
 
-# Add all the command line parameters
+'''
+The command line options
+'''
 @click.command()
 @click.argument('path_to_chatfile')
 @click.option('-p', '--percentage', is_flag=True, help='Show percentage contribution to the chat')
 @click.option('-cS', '--conv-starters', is_flag=True, help='Get the frequecy at which each person has started the conversation')
 @click.option('-u', '--username', nargs=1, type=str, help='Show results for a particular User only (Provide the username)')
 @click.option('-c', '--constraint', nargs=2, type=str, help='Add date Constraints (format - mm/dd/yy)')
-@click.option('-a', '--activity', is_flag=True, help='SHow activity')
+@click.option('-a', '--activity', is_flag=True, help='Show hourwise activity of users')
 def controller(path_to_chatfile, username, percentage, constraint, conv_starters, activity):
     if constraint:
         start_date = datetime.strptime(constraint[0], '%m/%d/%y').date()
