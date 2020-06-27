@@ -1,6 +1,7 @@
 import click
 import re
 from datetime import datetime
+from time import time
 
 
 ''' 
@@ -56,7 +57,7 @@ def calc_percentage(path_to_chatfile, username=None, start_date=None, end_date=N
     user_count = find_freq(path_to_chatfile, username, start_date, end_date)
     total_count = find_msg_count(path_to_chatfile, start_date, end_date)
 
-    print('Total Count: {}'.format(total_count))
+    print('Total Count: {}\n'.format(total_count))
 
     if username:
         print('User Count: {}'.format(user_count))
@@ -164,6 +165,7 @@ The command line options
 @click.option('-c', '--constraint', nargs=2, type=str, help='Add date Constraints (format - mm/dd/yy)')
 @click.option('-a', '--activity', is_flag=True, help='Show hourwise activity of users')
 def controller(path_to_chatfile, username, percentage, constraint, conv_starters, activity):
+    start = time()
     if constraint:
         start_date = datetime.strptime(constraint[0], '%m/%d/%y').date()
         end_date = datetime.strptime(constraint[1], '%m/%d/%y').date()
@@ -176,6 +178,9 @@ def controller(path_to_chatfile, username, percentage, constraint, conv_starters
         calc_percentage(path_to_chatfile, username, start_date, end_date)
     if activity:
         check_activity(path_to_chatfile, username, start_date, end_date)
+    end = time()
+    print("Program Finished")
+    print("Total time taken: {} seconds".format(end - start))
 
 
 if __name__ == '__main__':
