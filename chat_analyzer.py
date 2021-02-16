@@ -4,7 +4,7 @@ from datetime import datetime
 from time import time
 
 
-''' 
+'''
 Define Regex Patterns
 '''
 User = '(- (?P<username>[^:]*):)' # To get the user's name
@@ -15,7 +15,7 @@ Msg = Date + Time + User + '(?P<message>.*)' # Finally to get the parsed message
 
 
 def find_msg_count(chatfile, start_date=None, end_date=None):
-    ''' 
+    '''
     Find the number of messages
     '''
     file = open(chatfile, "r")
@@ -92,9 +92,9 @@ def find_conv_starters(path_to_chatfile, username=None):
             if difference != 0:
                 total_diff += difference
                 average = total_diff / count
-                ''' 
-                If the difference in time between current message and the last message is more than the average difference 
-                then that would mean that the current message is a conversation starter 
+                '''
+                If the difference in time between current message and the last message is more than the average difference
+                then that would mean that the current message is a conversation starter
                 '''
                 if difference > average:
                     user_count[m.groupdict()['username']] = user_count[m.groupdict()['username']] + 1 if m.groupdict()['username'] in user_count else 1
@@ -135,7 +135,7 @@ def check_activity(path_to_chatfile, username=None, start_date=None, end_date=No
                 if matched_user not in user_count:
                     user_count[matched_user] = {}
                 user_count[matched_user][matched_hour] = user_count[matched_user][matched_hour] + 1 if matched_hour in user_count[matched_user] else 1
-    
+
     for user in user_count:
         max_freq = 0
         max_freq_hour = '00'
@@ -144,13 +144,63 @@ def check_activity(path_to_chatfile, username=None, start_date=None, end_date=No
                 max_freq = user_count[user][hour]
                 max_freq_hour = hour
         user_count[user]['max'] = max_freq_hour
-    
+
 
     if username:
         print("The user {} mostly stays active around {} Hours".format(username, user_count[username]['max']))
     else:
         for user in user_count:
             print("The user {} mostly stays active around {} Hours".format(user, user_count[user]['max']))
+    file.close()
+
+
+def regression(chatfile, username=None, start_date=None, end_date=None):
+    '''
+    Make a linear regression model to predict whether there has been
+    an increase or decrease in the number of messages
+    '''
+    file = open(chatfile, "r")
+    cur_date = ""
+    cur_freq = 0
+    dates = []
+    freqs = []
+
+    for line in file:
+        match = re.search(Msg, line)
+        if match:
+            matched_date = datetime.strptime(match.groupdict()['date'], '%m/%d/%y').date()
+            matched_user = match.groupdict()['username']
+
+            if not username or matched_user == username:
+                if cur_date == "":
+                    cur_date = matched_date
+                elif matched_date != cur_date:
+                    dates.append(datetime.toordinal(cur_date))
+                    #  dates.append(cur_date.strftime('%m/%d/%y'))
+                    freqs.append(cur_freq)
+                    cur_date = matched_date
+                    cur_freq = 0
+                cur_freq += 1
+    dates.append(datetime.toordinal(cur_date))
+    #  dates.append(cur_date.strftime('%m/%d/%y'))
+    freqs.append(cur_freq)
+    print("Total freq: ", sum(freqs))
+
+    import matplotlib
+    import matplotlib.pyplot as plt
+    import numpy as np
+    from sklearn.linear_model import LinearRegression
+
+    x = np.array(dates).reshape(-1, 1)
+    y = np.array(freqs).reshape(-1, 1)
+    linear_regressor = LinearRegression()
+    linear_regressor.fit(x, y)
+    y_pred = linear_regressor.predict(x)
+    print(y_pred)
+    matplotlib.use('TkAgg')
+    plt.plot(x, y, 'o', color='black')
+    plt.plot(x, y_pred, color='red')
+    plt.show()
     file.close()
 
 
@@ -166,6 +216,7 @@ The command line options
 @click.option('-a', '--activity', is_flag=True, help='Show hourwise activity of users')
 def controller(path_to_chatfile, username, percentage, constraint, conv_starters, activity):
     start = time()
+    #  regression(path_to_chatfile, username=username)
     if constraint:
         start_date = datetime.strptime(constraint[0], '%m/%d/%y').date()
         end_date = datetime.strptime(constraint[1], '%m/%d/%y').date()
