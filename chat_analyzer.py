@@ -2,6 +2,11 @@ import click
 import re
 from datetime import datetime
 from time import time
+#  import matplotlib
+#  import matplotlib.pyplot as plt
+import numpy as np
+from sklearn.linear_model import LinearRegression
+#  matplotlib.use('TkAgg')
 
 
 '''
@@ -11,6 +16,7 @@ User = '(- (?P<username>[^:]*):)' # To get the user's name
 Date = '(?P<date>(?P<month>[0-9]{1,2})[-|\/]{1}(?P<day>[0-9]{1,2})[-|\/]{1}(?P<year>[0-9]{2}))' # To get the date
 Time = '(, (?P<time>(?P<hour>[0-9]{2}):(?P<minute>[0-9]{2})) )' # To get the time
 DateTime = Date + Time # To get the date and time combined (Don't know why I added this, probably never gonna use it :P)
+
 Msg = Date + Time + User + '(?P<message>.*)' # Finally to get the parsed message
 
 
@@ -154,7 +160,7 @@ def check_activity(path_to_chatfile, username=None, start_date=None, end_date=No
     file.close()
 
 
-def regression(chatfile, username=None, start_date=None, end_date=None):
+def interaction_curve_func(chatfile, username=None, start_date=None, end_date=None):
     '''
     Make a linear regression model to predict whether there has been
     an increase or decrease in the number of messages
@@ -163,6 +169,7 @@ def regression(chatfile, username=None, start_date=None, end_date=None):
     cur_date = ""
     cur_freq = 0
     dates = []
+    str_dates = []
     freqs = []
 
     for line in file:
@@ -171,36 +178,41 @@ def regression(chatfile, username=None, start_date=None, end_date=None):
             matched_date = datetime.strptime(match.groupdict()['date'], '%m/%d/%y').date()
             matched_user = match.groupdict()['username']
 
-            if not username or matched_user == username:
+            if (not username or matched_user == username) and (not start_date or (matched_date >= start_date and matched_date <= end_date)):
                 if cur_date == "":
                     cur_date = matched_date
                 elif matched_date != cur_date:
                     dates.append(datetime.toordinal(cur_date))
-                    #  dates.append(cur_date.strftime('%m/%d/%y'))
+                    str_dates.append(str(cur_date))
                     freqs.append(cur_freq)
                     cur_date = matched_date
                     cur_freq = 0
                 cur_freq += 1
+
     dates.append(datetime.toordinal(cur_date))
-    #  dates.append(cur_date.strftime('%m/%d/%y'))
+    str_dates.append(str(cur_date))
     freqs.append(cur_freq)
-    print("Total freq: ", sum(freqs))
 
-    import matplotlib
-    import matplotlib.pyplot as plt
-    import numpy as np
-    from sklearn.linear_model import LinearRegression
-
+    # Reshaping to get a (n X 1)D array
     x = np.array(dates).reshape(-1, 1)
     y = np.array(freqs).reshape(-1, 1)
     linear_regressor = LinearRegression()
     linear_regressor.fit(x, y)
     y_pred = linear_regressor.predict(x)
-    print(y_pred)
-    matplotlib.use('TkAgg')
-    plt.plot(x, y, 'o', color='black')
-    plt.plot(x, y_pred, color='red')
-    plt.show()
+    slope_sign_pred = (y_pred[1][0] - y_pred[0][0]) / abs(y_pred[1][0] - y_pred[0][0])
+
+    if slope_sign_pred < 0:
+        print("Your interactions in this chat has decreased!")
+    else:
+        print("Your interactions in this chat has increased!")
+    print("Showing graph....")
+
+    # Graph for future
+    #  plt.plot(x, y, 'o', color='black') # The point plot
+    #  plt.plot(x, y_pred, color='red') # The line plot
+    #  plt.xticks(dates, str_dates)
+    #  plt.locator_params(axis='x', nbins=4)
+    #  plt.show()
     file.close()
 
 
@@ -214,15 +226,17 @@ The command line options
 @click.option('-u', '--username', nargs=1, type=str, help='Show results for a particular User only (Provide the username)')
 @click.option('-c', '--constraint', nargs=2, type=str, help='Add date Constraints (format - mm/dd/yy)')
 @click.option('-a', '--activity', is_flag=True, help='Show hourwise activity of users')
-def controller(path_to_chatfile, username, percentage, constraint, conv_starters, activity):
+@click.option('-iC', '--interaction-curve', is_flag=True, help='Tell whether the interaction of the user has increased or decreased')
+def controller(path_to_chatfile, username, percentage, constraint, conv_starters, activity, interaction_curve):
     start = time()
-    #  regression(path_to_chatfile, username=username)
     if constraint:
         start_date = datetime.strptime(constraint[0], '%m/%d/%y').date()
         end_date = datetime.strptime(constraint[1], '%m/%d/%y').date()
     else:
         start_date = None
         end_date = None
+    if interaction_curve:
+        interaction_curve_func(path_to_chatfile, username=username, start_date=start_date, end_date=end_date)
     if conv_starters:
         find_conv_starters(path_to_chatfile, username)
     if percentage:
