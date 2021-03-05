@@ -1,4 +1,4 @@
-# WhatsApp Chat Analyzer
+# Chat Analyzer
 
 ## Description
 
@@ -19,4 +19,4 @@ Then you can run the program with the following command:
 To know about the options run the command:
 `python chat_analyzer --help`
 
-*NOTE - This program has only been tested on Python3
+*NOTE - This program has only been tested on Python3.6, and currently works for Whatsapp chat exports only :'(
