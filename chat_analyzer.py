@@ -2,11 +2,15 @@ import click
 import re
 from datetime import datetime
 from time import time
-#  import matplotlib
-#  import matplotlib.pyplot as plt
+import matplotlib
+import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.linear_model import LinearRegression
-#  matplotlib.use('TkAgg')
+
+try:
+    matplotlib.use('TkAgg')
+except:
+    print("Warning: Tkinter is not installed, graphs will not be shown")
 
 
 '''
@@ -160,7 +164,7 @@ def check_activity(path_to_chatfile, username=None, start_date=None, end_date=No
     file.close()
 
 
-def interaction_curve_func(chatfile, username=None, start_date=None, end_date=None):
+def interaction_curve_func(chatfile, username=None, start_date=None, end_date=None, show_graph=False):
     '''
     Make a linear regression model to predict whether there has been
     an increase or decrease in the number of messages
@@ -207,12 +211,14 @@ def interaction_curve_func(chatfile, username=None, start_date=None, end_date=No
         print("Your interactions in this chat has increased!")
     print("Showing graph....")
 
-    # Graph for future
-    #  plt.plot(x, y, 'o', color='black') # The point plot
-    #  plt.plot(x, y_pred, color='red') # The line plot
-    #  plt.xticks(dates, str_dates)
-    #  plt.locator_params(axis='x', nbins=4)
-    #  plt.show()
+    # For Graph
+    if show_graph:
+        plt.plot(x, y, 'o', color='black') # The point plot
+        plt.plot(x, y_pred, color='red') # The line plot
+        plt.xticks(dates, str_dates)
+        plt.locator_params(axis='x', nbins=4)
+        plt.show()
+
     file.close()
 
 
@@ -227,7 +233,8 @@ The command line options
 @click.option('-c', '--constraint', nargs=2, type=str, help='Add date Constraints (format - mm/dd/yy)')
 @click.option('-a', '--activity', is_flag=True, help='Show hourwise activity of users')
 @click.option('-iC', '--interaction-curve', is_flag=True, help='Tell whether the interaction of the user has increased or decreased')
-def controller(path_to_chatfile, username, percentage, constraint, conv_starters, activity, interaction_curve):
+@click.option('-sG', '--show-graph', is_flag=True, help='Show graph(s) for the selected options if available')
+def controller(path_to_chatfile, username, percentage, constraint, conv_starters, activity, interaction_curve, show_graph):
     start = time()
     if constraint:
         start_date = datetime.strptime(constraint[0], '%m/%d/%y').date()
@@ -236,7 +243,7 @@ def controller(path_to_chatfile, username, percentage, constraint, conv_starters
         start_date = None
         end_date = None
     if interaction_curve:
-        interaction_curve_func(path_to_chatfile, username=username, start_date=start_date, end_date=end_date)
+        interaction_curve_func(path_to_chatfile, username=username, start_date=start_date, end_date=end_date, show_graph=show_graph)
     if conv_starters:
         find_conv_starters(path_to_chatfile, username)
     if percentage:
