@@ -9,8 +9,10 @@ from sklearn.linear_model import LinearRegression
 
 try:
     matplotlib.use('TkAgg')
+    CAN_SHOW_GRAPH = True
 except:
     print("Warning: Tkinter is not installed, graphs will not be shown")
+    CAN_SHOW_GRAPH = False
 
 
 '''
@@ -209,10 +211,10 @@ def interaction_curve_func(chatfile, username=None, start_date=None, end_date=No
         print("Your interactions in this chat has decreased!")
     else:
         print("Your interactions in this chat has increased!")
-    print("Showing graph....")
 
     # For Graph
-    if show_graph:
+    if show_graph and CAN_SHOW_GRAPH:
+        print("Showing graph....")
         plt.plot(x, y, 'o', color='black') # The point plot
         plt.plot(x, y_pred, color='red') # The line plot
         plt.xticks(dates, str_dates)
