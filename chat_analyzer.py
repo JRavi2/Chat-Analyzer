@@ -1,5 +1,6 @@
 import click
 import re
+import json
 from datetime import datetime
 from time import time
 import matplotlib
@@ -18,18 +19,58 @@ except:
 '''
 Define Regex Patterns
 '''
-User = '(- (?P<username>[^:]*):)' # To get the user's name
-Date = '(?P<date>(?P<month>[0-9]{1,2})[-|\/]{1}(?P<day>[0-9]{1,2})[-|\/]{1}(?P<year>[0-9]{2}))' # To get the date
-Time = '(, (?P<time>(?P<hour>[0-9]{2}):(?P<minute>[0-9]{2})) )' # To get the time
-DateTime = Date + Time # To get the date and time combined (Don't know why I added this, probably never gonna use it :P)
+# For Telegram chat exports
+TDate = '(?P<date>(?P<year>[0-9]{4})-(?P<month>[0-9]{2})-(?P<day>[0-9]{2}))'
+TTime = '(?P<time>(?P<hour>[0-9]{2}):(?P<minute>[0-9]{2}):(?P<seconds>[0-9]{2}))'
+TDateTime = TDate + 'T' + TTime
 
-Msg = Date + Time + User + '(?P<message>.*)' # Finally to get the parsed message
+# For Whatsapp chat exports
+WUser = '(- (?P<username>[^:]*):)' # To get the user's name
+WDate = '(?P<date>(?P<month>[0-9]{1,2})[-|\/]{1}(?P<day>[0-9]{1,2})[-|\/]{1}(?P<year>[0-9]{2}))' # To get the date
+WTime = '(, (?P<time>(?P<hour>[0-9]{2}):(?P<minute>[0-9]{2})) )' # To get the time
+WMsg = WDate + WTime + WUser + '(?P<message>.*)' # Finally to get the parsed message
+
 
 def import_data(path_to_chatfile):
-    file = open(path_to_chatfile, "r")
+    f = open(path_to_chatfile, "r")
     msgs = []
-    for line in file:
-        match = re.search(Msg, line)
+
+    # Telegram export [WIP]
+    try:
+        data = json.load(f)['chats']['list']
+        print('Telegram chat recognized')
+        chat_name = input('Enter the chat name: ')
+
+        for chat in data:
+            if chat['name'] == chat_name:
+                chat_data = chat['messages']
+                break
+        else:
+            print('Chat data not found!')
+            exit()
+
+        for msg in chat_data:
+            date_match = re.search(TDateTime, msg['date'])
+            if date_match:
+                msgs.append({
+                                'username': msg['from'],
+                                'date': date_match.groupdict()['date'],
+                                'month': date_match.groupdict()['month'],
+                                'day': date_match.groupdict()['day'],
+                                'year': date_match.groupdict()['year'],
+                                'time': date_match.groupdict()['time'],
+                                'hour': date_match.groupdict()['hour'],
+                                'minute': date_match.groupdict()['minute'],
+                            })
+
+        return msgs
+    except:
+        pass
+
+    # Whatsapp Export
+    f.seek(0)
+    for line in f:
+        match = re.search(WMsg, line)
         if match:
             msgs.append({
                             'username': match.groupdict()['username'],
@@ -41,8 +82,9 @@ def import_data(path_to_chatfile):
                             'hour': match.groupdict()['hour'],
                             'minute': match.groupdict()['minute'],
                         })
-    file.close()
+    f.close()
     return msgs
+
 
 def find_msg_count(msgs, start_date=None, end_date=None):
     '''
