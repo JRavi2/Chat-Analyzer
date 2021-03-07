@@ -35,7 +35,7 @@ def import_data(path_to_chatfile):
     f = open(path_to_chatfile, "r")
     msgs = []
 
-    # Telegram export [WIP]
+    # Telegram export
     try:
         data = json.load(f)['chats']['list']
         print('Telegram chat recognized')
@@ -51,20 +51,20 @@ def import_data(path_to_chatfile):
 
         for msg in chat_data:
             date_match = re.search(TDateTime, msg['date'])
-            if date_match:
+            if date_match and 'from' in msg:
                 msgs.append({
                                 'username': msg['from'],
-                                'date': date_match.groupdict()['date'],
+                                'date': datetime.strptime(date_match.groupdict()['date'], '%Y-%M-%d').date(),
                                 'month': date_match.groupdict()['month'],
                                 'day': date_match.groupdict()['day'],
                                 'year': date_match.groupdict()['year'],
-                                'time': date_match.groupdict()['time'],
+                                'time': datetime.strptime(date_match.groupdict()['time'], '%H:%M:%S').time(),
                                 'hour': date_match.groupdict()['hour'],
                                 'minute': date_match.groupdict()['minute'],
                             })
 
         return msgs
-    except:
+    except Exception as e:
         pass
 
     # Whatsapp Export
@@ -74,11 +74,11 @@ def import_data(path_to_chatfile):
         if match:
             msgs.append({
                             'username': match.groupdict()['username'],
-                            'date': match.groupdict()['date'],
+                            'date': datetime.strptime(match.groupdict()['date'], '%m/%d/%y').date(),
                             'month': match.groupdict()['month'],
                             'day': match.groupdict()['day'],
                             'year': match.groupdict()['year'],
-                            'time': match.groupdict()['time'],
+                            'time': datetime.strptime(match.groupdict()['time'], '%H:%M').time(),
                             'hour': match.groupdict()['hour'],
                             'minute': match.groupdict()['minute'],
                         })
@@ -92,7 +92,7 @@ def find_msg_count(msgs, start_date=None, end_date=None):
     '''
     count = 0
     for msg in msgs:
-        date = datetime.strptime(msg['date'], '%m/%d/%y').date()
+        date = msg['date']
         if not start_date or (start_date and start_date < date < end_date):
             count += 1
     return count
@@ -105,7 +105,7 @@ def find_freq(msgs, username=None, start_date=None, end_date=None):
     user_count = {}
     for msg in msgs:
         user = msg['username']
-        date = datetime.strptime(msg['date'], '%m/%d/%y').date()
+        date = msg['date']
         if not start_date or (start_date and start_date < date < end_date):
             user_count[user] = user_count[user] + 1 if user in user_count else 1
     if username:
@@ -142,10 +142,10 @@ def find_conv_starters(msgs, username=None):
     last_msg = None
 
     # Get the first message that was sent in the chat
-    last_msg = datetime.strptime(msgs[0]['date'] + ' ' + msgs[0]['time'], '%m/%d/%y %H:%M')
+    last_msg = datetime.combine(msgs[0]['date'], msgs[0]['time'])
     user_count = {}
     for msg in msgs:
-        curr_msg = datetime.strptime(msg['date'] + ' ' + msg['time'], '%m/%d/%y %H:%M')
+        curr_msg = datetime.combine(msg['date'], msg['time'])
         difference = (curr_msg - last_msg).total_seconds()
         if difference != 0:
             total_diff += difference
@@ -184,7 +184,7 @@ def check_activity(msgs, username=None, start_date=None, end_date=None):
     for msg in msgs:
         user = msg['username']
         hour = msg['hour']
-        date = datetime.strptime(msg['date'], '%m/%d/%y').date()
+        date = msg['date']
         if not start_date or (start_date and start_date < date < end_date):
             if user not in user_count:
                 user_count[user] = {}
@@ -219,7 +219,7 @@ def interaction_curve_func(msgs, username=None, start_date=None, end_date=None, 
     freqs = []
 
     for msg in msgs:
-        date = datetime.strptime(msg['date'], '%m/%d/%y').date()
+        date = msg['date']
         user = msg['username']
 
         if (not username or user == username) and (not start_date or (date >= start_date and date <= end_date)):
