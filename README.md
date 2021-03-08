@@ -8,6 +8,8 @@ This program analyzes the gives chat file for:
 
 It also allows the user to add some date constraints
 
+The program currently works for Telegram and Whatsapp chat exports
+
 ## How to Run
 
 First install the required dependencies using the command:
@@ -19,4 +21,4 @@ Then you can run the program with the following command:
 To know about the options run the command:
 `python chat_analyzer --help`
 
-*NOTE - This program has only been tested on Python3.6, and currently works for Whatsapp chat exports only :'(
+*NOTE - This program has only been tested on Python3.6
