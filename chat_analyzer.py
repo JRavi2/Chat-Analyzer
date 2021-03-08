@@ -32,6 +32,22 @@ WMsg = WDate + WTime + WUser + '(?P<message>.*)' # Finally to get the parsed mes
 
 
 def import_data(path_to_chatfile):
+    '''
+    Recognise and parse data from a chat export and return in a standardised format
+    Return prototype:
+    msgs = [
+        {
+            'username': <string>,
+            'date': <datetime.date object>
+            'month': <string>
+            'day': <string>
+            'year': <string>
+            'time': <datetime.time object>
+            'hour': <string>
+            'minute': <string>
+        }
+    ]
+    '''
     f = open(path_to_chatfile, "r")
     msgs = []
 
