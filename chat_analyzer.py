@@ -49,6 +49,11 @@ def import_data(path_to_chatfile):
     ]
     '''
     f = open(path_to_chatfile, "r")
+
+    if !f:
+        print('File not found!!')
+        exit()
+
     msgs = []
 
     # Telegram export
@@ -99,6 +104,11 @@ def import_data(path_to_chatfile):
                             'minute': match.groupdict()['minute'],
                         })
     f.close()
+
+    if len(msgs) == 0:
+        print('Invalid file!')
+        exit()
+
     return msgs
 
 
