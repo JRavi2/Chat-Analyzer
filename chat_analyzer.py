@@ -145,7 +145,7 @@ def find_freq(msgs, username=None, start_date=None, end_date=None):
         return user_count
 
 
-def calc_percentage(msgs, username=None, start_date=None, end_date=None):
+def calc_percentage(msgs, username=None, start_date=None, end_date=None, show_graph=False):
     '''
     Calc the metrics of how much the entered user has spoken in the chat within the given constraint(if provided)
     '''
@@ -162,6 +162,18 @@ def calc_percentage(msgs, username=None, start_date=None, end_date=None):
             print("For the user {}".format(user))
             print("Message Count: {}".format(count))
             print("Percentage: {}\n".format(count/total_count*100))
+
+        # For Graph
+        if show_graph and CAN_SHOW_GRAPH:
+            print("\nShowing graph....")
+            users = list(user_count.keys())
+            counts = list(user_count.values())
+            x = np.arange(len(users))
+            width = 0.35
+            plt.bar(x, counts, tick_label=users)
+            plt.xticks(rotation=60)
+            plt.tight_layout()
+            plt.show()
 
 
 def find_conv_starters(msgs, username=None):
@@ -315,7 +327,7 @@ def controller(path_to_chatfile, username, percentage, constraint, conv_starters
     if conv_starters:
         find_conv_starters(msgs, username)
     if percentage:
-        calc_percentage(msgs, username, start_date, end_date)
+        calc_percentage(msgs, username, start_date, end_date, show_graph)
     if activity:
         check_activity(msgs, username, start_date, end_date)
     if interaction_curve:
