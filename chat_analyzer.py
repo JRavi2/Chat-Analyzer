@@ -48,9 +48,9 @@ def import_data(path_to_chatfile):
         }
     ]
     '''
-    f = open(path_to_chatfile, "r")
-
-    if !f:
+    try:
+        f = open(path_to_chatfile, "r")
+    except:
         print('File not found!!')
         exit()
 
