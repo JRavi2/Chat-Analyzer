@@ -118,6 +118,10 @@ def find_msg_count(msgs, start_date=None, end_date=None):
     Find the number of messages
     '''
     count = 0
+
+    if not start_date:
+        return len(msgs)
+
     for msg in msgs:
         date = msg['date']
         if not start_date or (start_date and start_date < date < end_date):
