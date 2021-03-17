@@ -1,12 +1,13 @@
 import click
-import re
 import json
-from datetime import datetime
-from time import time
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
+import re
+
+from datetime import datetime
 from sklearn.linear_model import LinearRegression
+from time import time
 
 try:
     matplotlib.use('TkAgg')
