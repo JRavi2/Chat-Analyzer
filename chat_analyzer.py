@@ -211,7 +211,7 @@ def find_conv_starters(msgs, username=None):
             print("The user {} started consversation {} time(s)".format(user, count))
 
 
-def check_activity(msgs, username=None, start_date=None, end_date=None):
+def check_activity(msgs, username=None, start_date=None, end_date=None, show_graph=False):
     '''
     Get the time of the day when each user(or a particular user) is most active
     '''
@@ -245,6 +245,16 @@ def check_activity(msgs, username=None, start_date=None, end_date=None):
 
     if username:
         print("The user {} mostly stays active around {} Hours".format(username, user_count[username]['max']))
+
+        # For Graph
+        if show_graph and CAN_SHOW_GRAPH:
+            print("\nShowing graph....")
+            hours = list(user_count[username].keys())[0:-1]
+            counts = list(user_count[username].values())[0:-1]
+            plt.plot(hours, counts)
+            plt.xticks(rotation=60)
+            plt.tight_layout()
+            plt.show()
     else:
         for user in user_count:
             print("The user {} mostly stays active around {} Hours".format(user, user_count[user]['max']))
@@ -329,7 +339,7 @@ def controller(path_to_chatfile, username, percentage, constraint, conv_starters
     if percentage:
         calc_percentage(msgs, username, start_date, end_date, show_graph)
     if activity:
-        check_activity(msgs, username, start_date, end_date)
+        check_activity(msgs, username, start_date, end_date, show_graph)
     if interaction_curve:
         interaction_curve_func(msgs, username=username, start_date=start_date, end_date=end_date, show_graph=show_graph)
     end = time()
