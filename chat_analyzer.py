@@ -249,8 +249,11 @@ def check_activity(msgs, username=None, start_date=None, end_date=None, show_gra
         # For Graph
         if show_graph and CAN_SHOW_GRAPH:
             print("\nShowing graph....")
-            hours = list(user_count[username].keys())[0:-1]
-            counts = list(user_count[username].values())[0:-1]
+            hours = np.arange(24)
+            counts = [0]*24
+            for hour, count in user_count[username].items():
+                if hour != 'max':
+                    counts[int(hour)] = count
             plt.plot(hours, counts)
             plt.xticks(rotation=60)
             plt.tight_layout()
@@ -258,6 +261,23 @@ def check_activity(msgs, username=None, start_date=None, end_date=None, show_gra
     else:
         for user in user_count:
             print("The user {} mostly stays active around {} Hours".format(user, user_count[user]['max']))
+
+        # For Graph
+        if show_graph and CAN_SHOW_GRAPH:
+            print("\nShowing graph....")
+
+            print(json.dumps(user_count, indent=4, sort_keys=True))
+            for user in user_count:
+                hours = np.arange(24)
+                counts = [0]*24
+                for hour, count in user_count[user].items():
+                    if hour != 'max':
+                        counts[int(hour)] = count
+                plt.plot(hours, counts, label=user)
+            plt.xticks(rotation=60)
+            plt.tight_layout()
+            plt.legend()
+            plt.show()
 
 
 def interaction_curve_func(msgs, username=None, start_date=None, end_date=None, show_graph=False):
