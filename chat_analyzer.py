@@ -318,10 +318,10 @@ def interaction_curve_func(msgs, username=None, start_date=None, end_date=None, 
     y_pred = linear_regressor.predict(x)
     slope_sign_pred = (y_pred[1][0] - y_pred[0][0]) / abs(y_pred[1][0] - y_pred[0][0])
 
-    if slope_sign_pred < 0:
-        print("Your interactions in this chat has decreased!")
-    else:
-        print("Your interactions in this chat has increased!")
+    print('{} interactions in this chat have {}!'.format(
+        'Your' if username else 'The',
+        'decreased' if slope_sign_pred < 0 else 'increased'
+    ))
 
     # For Graph
     if show_graph and CAN_SHOW_GRAPH:
