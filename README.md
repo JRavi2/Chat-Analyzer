@@ -5,8 +5,9 @@
 This program analyzes the gives chat file for:
 - How active a given user is in the chat
 - Who has started a conversation in the chat how many times
+- Has a user's (or the whole chat's) interaction increased in the given period (or the whole chat)
 
-It also allows the user to add some date constraints
+It also allows the user to add some date constraints and genrate graphs for some actions.
 
 The program currently works for Telegram and Whatsapp chat exports
 
@@ -20,5 +21,3 @@ Then you can run the program with the following command:
 
 To know about the options run the command:
 `python chat_analyzer --help`
-
-*NOTE - This program has only been tested on Python3.6
