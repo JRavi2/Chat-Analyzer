@@ -13,7 +13,7 @@ try:
     matplotlib.use('TkAgg')
     CAN_SHOW_GRAPH = True
 except:
-    print("Warning: Tkinter is not installed, graphs will not be shown")
+    print('Warning: Tkinter is not installed, graphs will not be shown')
     CAN_SHOW_GRAPH = False
 
 
@@ -50,7 +50,7 @@ def import_data(path_to_chatfile):
     ]
     '''
     try:
-        f = open(path_to_chatfile, "r")
+        f = open(path_to_chatfile, 'r')
     except:
         print('File not found!!')
         exit()
@@ -159,13 +159,13 @@ def calc_percentage(msgs, username=None, start_date=None, end_date=None, show_gr
         print('Percentage: {}'.format(user_count/total_count*100))
     else:
         for user, count in user_count.items():
-            print("For the user {}".format(user))
-            print("Message Count: {}".format(count))
-            print("Percentage: {}\n".format(count/total_count*100))
+            print('For the user {}'.format(user))
+            print('Message Count: {}'.format(count))
+            print('Percentage: {}\n'.format(count/total_count*100))
 
         # For Graph
         if show_graph and CAN_SHOW_GRAPH:
-            print("\nShowing graph....")
+            print('\nShowing graph....')
             users = list(user_count.keys())
             counts = list(user_count.values())
             x = np.arange(len(users))
@@ -205,10 +205,10 @@ def find_conv_starters(msgs, username=None):
             count += 1
 
     if username:
-        print("The user {} started consversation {} time(s)".format(username, user_count[username]))
+        print('The user {} started consversation {} time(s)'.format(username, user_count[username]))
     else:
         for user, count in user_count.items():
-            print("The user {} started consversation {} time(s)".format(user, count))
+            print('The user {} started consversation {} time(s)'.format(user, count))
 
 
 def check_activity(msgs, username=None, start_date=None, end_date=None, show_graph=False):
@@ -244,11 +244,11 @@ def check_activity(msgs, username=None, start_date=None, end_date=None, show_gra
 
 
     if username:
-        print("The user {} mostly stays active around {} Hours".format(username, user_count[username]['max']))
+        print('The user {} mostly stays active around {} Hours'.format(username, user_count[username]['max']))
 
         # For Graph
         if show_graph and CAN_SHOW_GRAPH:
-            print("\nShowing graph....")
+            print('\nShowing graph....')
             hours = np.arange(24)
             counts = [0]*24
             for hour, count in user_count[username].items():
@@ -260,11 +260,11 @@ def check_activity(msgs, username=None, start_date=None, end_date=None, show_gra
             plt.show()
     else:
         for user in user_count:
-            print("The user {} mostly stays active around {} Hours".format(user, user_count[user]['max']))
+            print('The user {} mostly stays active around {} Hours'.format(user, user_count[user]['max']))
 
         # For Graph
         if show_graph and CAN_SHOW_GRAPH:
-            print("\nShowing graph....")
+            print('\nShowing graph....')
 
             print(json.dumps(user_count, indent=4, sort_keys=True))
             for user in user_count:
@@ -285,7 +285,7 @@ def interaction_curve_func(msgs, username=None, start_date=None, end_date=None, 
     Make a linear regression model to predict whether there has been
     an increase or decrease in the number of messages
     '''
-    cur_date = ""
+    cur_date = ''
     cur_freq = 0
     dates = []
     str_dates = []
@@ -296,7 +296,7 @@ def interaction_curve_func(msgs, username=None, start_date=None, end_date=None, 
         user = msg['username']
 
         if (not username or user == username) and (not start_date or (date >= start_date and date <= end_date)):
-            if cur_date == "":
+            if cur_date == '':
                 cur_date = date
             elif date != cur_date:
                 dates.append(datetime.toordinal(cur_date))
@@ -325,7 +325,7 @@ def interaction_curve_func(msgs, username=None, start_date=None, end_date=None, 
 
     # For Graph
     if show_graph and CAN_SHOW_GRAPH:
-        print("Showing graph....")
+        print('Showing graph....')
         plt.plot(x, y, 'o', color='black') # The point plot
         plt.plot(x, y_pred, color='red') # The line plot
         plt.xticks(dates, str_dates)
@@ -363,8 +363,8 @@ def controller(path_to_chatfile, username, percentage, constraint, conv_starters
     if interaction_curve:
         interaction_curve_func(msgs, username=username, start_date=start_date, end_date=end_date, show_graph=show_graph)
     end = time()
-    print("Program Finished")
-    print("Total time taken: {} seconds".format(end - start))
+    print('Program Finished')
+    print('Total time taken: {} seconds'.format(end - start))
 
 
 if __name__ == '__main__':
