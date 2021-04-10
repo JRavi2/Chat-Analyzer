@@ -6,10 +6,11 @@ from click.testing import CliRunner
 from chat_analyzer import controller
 
 
-def test_percentage():
-    runner = CliRunner()
-    res = runner.invoke(controller, ['test_chat.txt', '-p'])
-    expected_res = '''Total Count: 39939
+class Tests:
+    def test_percentage_all(self):
+        runner = CliRunner()
+        res = runner.invoke(controller, ['test_chat.txt', '-p'])
+        expected_res = '''Total Count: 39939
 
 For the user A
 Message Count: 6872
@@ -44,5 +45,15 @@ Message Count: 1
 Percentage: 0.0025038183229424875
 
 Program Finished'''
-    assert expected_res == res.output[:res.output[:-1].rfind('\n')]
+        assert expected_res == res.output[:res.output[:-1].rfind('\n')]
+
+    def test_percentage_user(self):
+        runner = CliRunner()
+        res = runner.invoke(controller, ['test_chat.txt', '-p', '-u', 'A'])
+        expected_res = '''Total Count: 39939
+
+Message Count: 6872
+Percentage: 17.206239515260773
+Program Finished'''
+        assert expected_res == res.output[:res.output[:-1].rfind('\n')]
 
