@@ -47,6 +47,7 @@ Percentage: 0.0025038183229424875
 Program Finished'''
         assert expected_res == res.output[:res.output[:-1].rfind('\n')]
 
+
     def test_percentage_user(self):
         runner = CliRunner()
         res = runner.invoke(controller, ['test_chat.txt', '-p', '-u', 'A'])
@@ -57,3 +58,24 @@ Percentage: 17.206239515260773
 Program Finished'''
         assert expected_res == res.output[:res.output[:-1].rfind('\n')]
 
+
+    def test_conv_starters_all(self):
+        runner = CliRunner()
+        res = runner.invoke(controller, ['test_chat.txt', '-cS'])
+        expected_res = '''The user C started consversation 255 time(s)
+The user E started consversation 159 time(s)
+The user A started consversation 302 time(s)
+The user D started consversation 283 time(s)
+The user B started consversation 187 time(s)
+The user F started consversation 89 time(s)
+The user G started consversation 4 time(s)
+Program Finished'''
+        assert expected_res == res.output[:res.output[:-1].rfind('\n')]
+
+
+    def test_conv_starters_user(self):
+        runner = CliRunner()
+        res = runner.invoke(controller, ['test_chat.txt', '-cS', '-u', 'A'])
+        expected_res = '''The user A started consversation 302 time(s)
+Program Finished'''
+        assert expected_res == res.output[:res.output[:-1].rfind('\n')]
