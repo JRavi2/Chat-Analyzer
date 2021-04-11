@@ -107,13 +107,13 @@ The command line options
 '''
 @click.command()
 @click.argument('path_to_chatfile')
-@click.option('-p', '--percentage', is_flag=True, help='Show percentage contribution to the chat')
-@click.option('-cS', '--conv-starters', is_flag=True, help='Get the frequecy at which each person has started the conversation')
 @click.option('-u', '--username', nargs=1, type=str, help='Show results for a particular User only (Provide the username)')
 @click.option('-c', '--constraint', nargs=2, type=str, help='Add date Constraints (format - mm/dd/yy)')
+@click.option('-sG', '--show-graph', is_flag=True, help='Show graph(s) for the selected options if available')
+@click.option('-p', '--percentage', is_flag=True, help='Show percentage contribution to the chat')
+@click.option('-cS', '--conv-starters', is_flag=True, help='Get the frequecy at which each person has started the conversation')
 @click.option('-a', '--activity', is_flag=True, help='Show hourwise activity of users')
 @click.option('-iC', '--interaction-curve', is_flag=True, help='Tell whether the interaction of the user has increased or decreased')
-@click.option('-sG', '--show-graph', is_flag=True, help='Show graph(s) for the selected options if available')
 def controller(path_to_chatfile, username, percentage, constraint, conv_starters, activity, interaction_curve, show_graph):
     msgs = import_data(path_to_chatfile)
     start = time()
