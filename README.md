@@ -17,7 +17,7 @@ First install the required dependencies using the command:
 
     pip install -r requirements.txt
 
-Then you can run the program, by going to to 'src' directory and then running the following command:
+Then you can run the program, by going to to `src` directory and then running the following command:
 
     python chat_analyzer.py <options> <path_to_chatfile>
 
@@ -27,6 +27,6 @@ To know about the options run the command:
 
 ## Testing
 
-To test changes, enter the 'tests' directory and run the following command:
+To test changes, enter the `tests` directory and run the following command:
 
     pytest tests.py
