@@ -79,3 +79,26 @@ Program Finished'''
         expected_res = '''The user A started consversation 302 time(s)
 Program Finished'''
         assert expected_res == res.output[:res.output[:-1].rfind('\n')]
+
+
+    def test_activity_all(self):
+        runner = CliRunner()
+        res = runner.invoke(controller, ['test_chat.txt', '-a'])
+        expected_res = '''The user A mostly stays active around 15 Hours
+The user B mostly stays active around 15 Hours
+The user C mostly stays active around 15 Hours
+The user D mostly stays active around 15 Hours
+The user E mostly stays active around 15 Hours
+The user F mostly stays active around 14 Hours
+The user G mostly stays active around 18 Hours
+The user H mostly stays active around 21 Hours
+Program Finished'''
+        assert expected_res == res.output[:res.output[:-1].rfind('\n')]
+
+
+    def test_activity_user(self):
+        runner = CliRunner()
+        res = runner.invoke(controller, ['test_chat.txt', '-a', '-u', 'A'])
+        expected_res = '''The user A mostly stays active around 15 Hours
+Program Finished'''
+        assert expected_res == res.output[:res.output[:-1].rfind('\n')]
