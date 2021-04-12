@@ -3,6 +3,7 @@
 ## Description
 
 This program analyzes the gives chat file for:
+- What is the percentage contribution (in terms of number of messages) of a user in the chat
 - How active a given user is in the chat
 - Who has started a conversation in the chat how many times
 - Has a user's (or the whole chat's) interaction increased in the given period (or the whole chat)
