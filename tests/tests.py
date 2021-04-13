@@ -102,3 +102,19 @@ Program Finished'''
         expected_res = '''The user A mostly stays active around 15 Hours
 Program Finished'''
         assert expected_res == res.output[:res.output[:-1].rfind('\n')]
+
+
+    def test_interaction_curve_all(self):
+        runner = CliRunner()
+        res = runner.invoke(controller, ['test_chat.txt', '-iC'])
+        expected_res = '''The interactions in this chat have increased!
+Program Finished'''
+        assert expected_res == res.output[:res.output[:-1].rfind('\n')]
+
+
+    def test_interaction_curve_user(self):
+        runner = CliRunner()
+        res = runner.invoke(controller, ['test_chat.txt', '-iC', '-u', 'A'])
+        expected_res = '''Your interactions in this chat have increased!
+Program Finished'''
+        assert expected_res == res.output[:res.output[:-1].rfind('\n')]
