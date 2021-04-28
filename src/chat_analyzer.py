@@ -9,6 +9,13 @@ from chat_functions import *
 '''
 Define Regex Patterns
 '''
+# For Signal chat exports
+SDate = '(?P<date>(?P<year>[0-9]{4})-(?P<month>[0-9]{2})-(?P<day>[0-9]{2}))'
+STime = '(?P<time>(?P<hour>[0-9]{2}):(?P<minute>[0-9]{2}))'
+SDateTime = '\[' + SDate + ' ' + STime + '\]'
+SUser = '(?P<username>[^:]*):'
+SMsg = SDateTime + SUser + '(?P<message>.*)'
+
 # For Telegram chat exports
 TDate = '(?P<date>(?P<year>[0-9]{4})-(?P<month>[0-9]{2})-(?P<day>[0-9]{2}))'
 TTime = '(?P<time>(?P<hour>[0-9]{2}):(?P<minute>[0-9]{2}):(?P<seconds>[0-9]{2}))'
@@ -77,6 +84,33 @@ def import_data(path_to_chatfile):
         return msgs
     except Exception as e:
         pass
+
+    # Signal Export
+    f.seek(0)
+    isSignal = False
+    for line in f:
+        match = re.search(SMsg, line)
+        if match:
+            isSignal = True
+            break
+
+    if isSignal:
+        f.seek(0)
+        print('Signal chat recognized')
+        for line in f:
+            match = re.search(SMsg, line)
+            if match:
+                msgs.append({
+                                'username': match.groupdict()['username'],
+                                'date': datetime.strptime(match.groupdict()['date'], '%Y-%M-%d').date(),
+                                'month': match.groupdict()['month'],
+                                'day': match.groupdict()['day'],
+                                'year': match.groupdict()['year'],
+                                'time': datetime.strptime(match.groupdict()['time'], '%H:%M').time(),
+                                'hour': match.groupdict()['hour'],
+                                'minute': match.groupdict()['minute'],
+                            })
+        return msgs
 
     # Whatsapp Export
     f.seek(0)
