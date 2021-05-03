@@ -128,53 +128,134 @@ class Test_SG:
         expected_res = '''Signal chat recognized
 Total Count: 415
 
-For the user  A
+For the user A
 Message Count: 27
 Percentage: 6.506024096385541
 
-For the user  B
+For the user B
 Message Count: 24
 Percentage: 5.783132530120482
 
-For the user  C
+For the user C
 Message Count: 10
 Percentage: 2.4096385542168677
 
-For the user  D
+For the user D
 Message Count: 32
 Percentage: 7.710843373493977
 
-For the user  E
+For the user E
 Message Count: 35
 Percentage: 8.433734939759036
 
-For the user  F
+For the user F
 Message Count: 115
 Percentage: 27.710843373493976
 
-For the user  G
+For the user G
 Message Count: 28
 Percentage: 6.746987951807229
 
-For the user  H
+For the user H
 Message Count: 2
 Percentage: 0.48192771084337355
 
-For the user  I
+For the user I
 Message Count: 9
 Percentage: 2.1686746987951806
 
-For the user  J
+For the user J
 Message Count: 32
 Percentage: 7.710843373493977
 
-For the user  K
+For the user K
 Message Count: 70
 Percentage: 16.867469879518072
 
-For the user  L
+For the user L
 Message Count: 31
 Percentage: 7.46987951807229
 
+Program Finished'''
+        assert expected_res == res.output[:res.output[:-1].rfind('\n')]
+
+    def test_percentage_user(self):
+        runner = CliRunner()
+        res = runner.invoke(controller, ['test_chats/sg.md', '-p', '-u', 'A'])
+        expected_res = '''Signal chat recognized
+Total Count: 415
+
+Message Count: 27
+Percentage: 6.506024096385541
+Program Finished'''
+        assert expected_res == res.output[:res.output[:-1].rfind('\n')]
+
+
+    def test_conv_starters_all(self):
+        runner = CliRunner()
+        res = runner.invoke(controller, ['test_chats/sg.md', '-cS'])
+        expected_res = '''Signal chat recognized
+The user F started consversation 4 time(s)
+The user D started consversation 2 time(s)
+The user E started consversation 2 time(s)
+The user B started consversation 1 time(s)
+The user A started consversation 1 time(s)
+The user K started consversation 2 time(s)
+Program Finished'''
+        assert expected_res == res.output[:res.output[:-1].rfind('\n')]
+
+
+    def test_conv_starters_user(self):
+        runner = CliRunner()
+        res = runner.invoke(controller, ['test_chats/sg.md', '-cS', '-u', 'A'])
+        expected_res = '''Signal chat recognized
+The user A started consversation 1 time(s)
+Program Finished'''
+        assert expected_res == res.output[:res.output[:-1].rfind('\n')]
+
+
+    def test_activity_all(self):
+        runner = CliRunner()
+        res = runner.invoke(controller, ['test_chats/sg.md', '-a'])
+        expected_res = '''Signal chat recognized
+The user A mostly stays active around 13 Hours
+The user B mostly stays active around 13 Hours
+The user C mostly stays active around 20 Hours
+The user D mostly stays active around 14 Hours
+The user E mostly stays active around 14 Hours
+The user F mostly stays active around 13 Hours
+The user G mostly stays active around 20 Hours
+The user H mostly stays active around 13 Hours
+The user I mostly stays active around 13 Hours
+The user J mostly stays active around 23 Hours
+The user K mostly stays active around 20 Hours
+The user L mostly stays active around 23 Hours
+Program Finished'''
+        assert expected_res == res.output[:res.output[:-1].rfind('\n')]
+
+
+    def test_activity_user(self):
+        runner = CliRunner()
+        res = runner.invoke(controller, ['test_chats/sg.md', '-a', '-u', 'A'])
+        expected_res = '''Signal chat recognized
+The user A mostly stays active around 13 Hours
+Program Finished'''
+        assert expected_res == res.output[:res.output[:-1].rfind('\n')]
+
+
+    def test_interaction_curve_all(self):
+        runner = CliRunner()
+        res = runner.invoke(controller, ['test_chats/sg.md', '-iC'])
+        expected_res = '''Signal chat recognized
+The interactions in this chat have increased!
+Program Finished'''
+        assert expected_res == res.output[:res.output[:-1].rfind('\n')]
+
+
+    def test_interaction_curve_user(self):
+        runner = CliRunner()
+        res = runner.invoke(controller, ['test_chats/sg.md', '-iC', '-u', 'A'])
+        expected_res = '''Signal chat recognized
+Your interactions in this chat have increased!
 Program Finished'''
         assert expected_res == res.output[:res.output[:-1].rfind('\n')]
