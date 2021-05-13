@@ -166,7 +166,6 @@ def check_activity(msgs, username=None, start_date=None, end_date=None, show_gra
         if show_graph and CAN_SHOW_GRAPH:
             print('\nShowing graph....')
 
-            print(json.dumps(user_count, indent=4, sort_keys=True))
             for user in user_count:
                 hours = np.arange(24)
                 counts = [0]*24
