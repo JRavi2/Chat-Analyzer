@@ -181,7 +181,7 @@ def check_activity(msgs, username=None, start_date=None, end_date=None, show_gra
 
 def interaction_curve_func(msgs, username=None, start_date=None, end_date=None, show_graph=False):
     '''
-    Make a linear regression model to predict whether there has been
+    Use Linear Regression to predict whether there has been
     an increase or decrease in the number of messages
     '''
     cur_date = ''

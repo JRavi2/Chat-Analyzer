@@ -23,7 +23,7 @@ TDateTime = TDate + 'T' + TTime
 
 # For Whatsapp chat exports
 WUser = '(- (?P<username>[^:]*):)' # To get the user's name
-WDate = '(?P<date>(?P<month>[0-9]{1,2})[-|\/]{1}(?P<day>[0-9]{1,2})[-|\/]{1}(?P<year>[0-9]{2}))' # To get the date
+WDate = '(?P<date>(?P<month>[0-9]{1,2})[-\/]{1}(?P<day>[0-9]{1,2})[-\/]{1}(?P<year>[0-9]{2}))' # To get the date
 WTime = '(, (?P<time>(?P<hour>[0-9]{2}):(?P<minute>[0-9]{2})) )' # To get the time
 WMsg = WDate + WTime + WUser + '(?P<message>.*)' # Finally to get the parsed message
 
