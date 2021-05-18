@@ -136,6 +136,19 @@ def import_data(path_to_chatfile):
     return msgs
 
 
+def export_data(msgs, filename):
+    '''
+    Export the imported data to a json file in a standar format
+    '''
+    if not filename:
+        filename = 'export.json'
+
+    json_msgs = {'messages' : msgs}
+
+    with open(filename, 'w') as outfile:
+        json.dump(json_msgs, outfile, default=str)
+
+
 '''
 The command line options
 '''
@@ -148,7 +161,9 @@ The command line options
 @click.option('-cS', '--conv-starters', is_flag=True, help='Get the frequecy at which each person has started the conversation')
 @click.option('-a', '--activity', is_flag=True, help='Show hourwise activity of users')
 @click.option('-iC', '--interaction-curve', is_flag=True, help='Tell whether the interaction of the user has increased or decreased')
-def controller(path_to_chatfile, username, percentage, constraint, conv_starters, activity, interaction_curve, show_graph):
+@click.option('-e', '--export', is_flag=True, help='Export the data into a standard json format')
+@click.option('-eP', '--export-path', nargs=1, type=str, help='Add the export path')
+def controller(path_to_chatfile, username, percentage, constraint, conv_starters, activity, interaction_curve, show_graph, export, export_path):
     msgs = import_data(path_to_chatfile)
     start = time()
     if constraint:
@@ -165,6 +180,8 @@ def controller(path_to_chatfile, username, percentage, constraint, conv_starters
         check_activity(msgs, username, start_date, end_date, show_graph)
     if interaction_curve:
         interaction_curve_func(msgs, username=username, start_date=start_date, end_date=end_date, show_graph=show_graph)
+    if export:
+        export_data(msgs, export_path)
     end = time()
     print('Program Finished')
     print('Total time taken: {} seconds'.format(end - start))
