@@ -10,6 +10,8 @@ This program analyzes the gives chat file for:
 
 It also allows the user to add some date constraints and genrate graphs for some actions.
 
+If you want to run your own analysis, the program can also export the chat data after converting it into a standard format.
+
 The program currently works for Signal, Telegram and Whatsapp chat exports
 
 ## How to Run
