@@ -1,44 +1,52 @@
 import json
 import re
+from datetime import datetime
 from time import time
+from typing import Any, Dict, List
 
 import click
+import matplotlib
 
-from chat_functions import *
+from chat_functions import (calc_percentage, check_activity,
+                            find_conv_starters, interaction_curve_func)
 
 try:
     matplotlib.use('TkAgg')
     CAN_SHOW_GRAPH = True
-except:
+except ImportError:
     print('Warning: Tkinter is not installed, graphs will not be shown')
     CAN_SHOW_GRAPH = False
 
 
-'''
+"""
 Define Regex Patterns
-'''
+"""
 # For Signal chat exports
-SDate = '(?P<date>(?P<year>[0-9]{4})-(?P<month>[0-9]{2})-(?P<day>[0-9]{2}))'
-STime = '(?P<time>(?P<hour>[0-9]{2}):(?P<minute>[0-9]{2}))'
-SDateTime = '\[' + SDate + ' ' + STime + '\]'
-SUser = '(?P<username>[^:]*):'
-SMsg = SDateTime + ' ' + SUser + '(?P<message>.*)'
+SDate = r'(?P<date>(?P<year>[0-9]{4})-(?P<month>[0-9]{2})-(?P<day>[0-9]{2}))'
+STime = r'(?P<time>(?P<hour>[0-9]{2}):(?P<minute>[0-9]{2}))'
+SDateTime = r'\[' + SDate + r' ' + STime + r'\]'
+SUser = r'(?P<username>[^:]*):'
+SMsg = SDateTime + r' ' + SUser + r'(?P<message>.*)'
 
 # For Telegram chat exports
-TDate = '(?P<date>(?P<year>[0-9]{4})-(?P<month>[0-9]{2})-(?P<day>[0-9]{2}))'
-TTime = '(?P<time>(?P<hour>[0-9]{2}):(?P<minute>[0-9]{2}):(?P<seconds>[0-9]{2}))'
-TDateTime = TDate + 'T' + TTime
+TDate = r'(?P<date>(?P<year>[0-9]{4})-(?P<month>[0-9]{2})-(?P<day>[0-9]{2}))'
+TTime = r'(?P<time>(?P<hour>[0-9]{2}):(?P<minute>[0-9]{2}):(?P<seconds>[0-9]{2}))'
+TDateTime = TDate + r'T' + TTime
 
 # For Whatsapp chat exports
-WUser = '(- (?P<username>[^:]*):)' # To get the user's name
-WDate = '(?P<date>(?P<month>[0-9]{1,2})[-\/]{1}(?P<day>[0-9]{1,2})[-\/]{1}(?P<year>[0-9]{2}))' # To get the date
-WTime = '(, (?P<time>(?P<hour>[0-9]{2}):(?P<minute>[0-9]{2})) )' # To get the time
-WMsg = WDate + WTime + WUser + '(?P<message>.*)' # Finally to get the parsed message
+WUser = r'(- (?P<username>[^:]*):)'  # To get the user's name
+# To get the date
+WDate = r'(?P<date>(?P<month>[0-9]{1,2})[-\/]{1}(?P<day>[0-9]{1,2})[-\/]{1}(?P<year>[0-9]{2}))'
+# To get the time
+WTime = r'(, (?P<time>(?P<hour>[0-9]{2}):(?P<minute>[0-9]{2})) )'
+# Finally to get the parsed message
+WMsg = WDate + WTime + WUser + r'(?P<message>.*)'
 
 
-def import_data(path_to_chatfile):
-    '''
-    Recognise and parse data from a chat export and return in a standardised format
+def import_data(path_to_chatfile: str) -> List[Dict[str, Any]]:
+    """
+    Recognise and parse data from a chat export and return in a standardised format.
+
     Return prototype:
     msgs = [
         {
@@ -52,10 +60,10 @@ def import_data(path_to_chatfile):
             'minute': <string>
         }
     ]
-    '''
+    """
     try:
         f = open(path_to_chatfile, 'r')
-    except:
+    except FileNotFoundError:
         print('File not found!!')
         exit()
 
@@ -79,18 +87,18 @@ def import_data(path_to_chatfile):
             date_match = re.search(TDateTime, msg['date'])
             if date_match and 'from' in msg:
                 msgs.append({
-                                'username': msg['from'],
-                                'date': datetime.strptime(date_match.groupdict()['date'], '%Y-%M-%d').date(),
-                                'month': date_match.groupdict()['month'],
-                                'day': date_match.groupdict()['day'],
-                                'year': date_match.groupdict()['year'],
-                                'time': datetime.strptime(date_match.groupdict()['time'], '%H:%M:%S').time(),
-                                'hour': date_match.groupdict()['hour'],
-                                'minute': date_match.groupdict()['minute'],
-                            })
+                    'username': msg['from'],
+                    'date': datetime.strptime(date_match.groupdict()['date'], '%Y-%M-%d').date(),
+                    'month': date_match.groupdict()['month'],
+                    'day': date_match.groupdict()['day'],
+                    'year': date_match.groupdict()['year'],
+                    'time': datetime.strptime(date_match.groupdict()['time'], '%H:%M:%S').time(),
+                    'hour': date_match.groupdict()['hour'],
+                    'minute': date_match.groupdict()['minute'],
+                })
 
         return msgs
-    except Exception as e:
+    except Exception:
         pass
 
     # Signal Export
@@ -109,15 +117,15 @@ def import_data(path_to_chatfile):
             match = re.search(SMsg, line)
             if match:
                 msgs.append({
-                                'username': match.groupdict()['username'],
-                                'date': datetime.strptime(match.groupdict()['date'], '%Y-%M-%d').date(),
-                                'month': match.groupdict()['month'],
-                                'day': match.groupdict()['day'],
-                                'year': match.groupdict()['year'],
-                                'time': datetime.strptime(match.groupdict()['time'], '%H:%M').time(),
-                                'hour': match.groupdict()['hour'],
-                                'minute': match.groupdict()['minute'],
-                            })
+                    'username': match.groupdict()['username'],
+                    'date': datetime.strptime(match.groupdict()['date'], '%Y-%M-%d').date(),
+                    'month': match.groupdict()['month'],
+                    'day': match.groupdict()['day'],
+                    'year': match.groupdict()['year'],
+                    'time': datetime.strptime(match.groupdict()['time'], '%H:%M').time(),
+                    'hour': match.groupdict()['hour'],
+                    'minute': match.groupdict()['minute'],
+                })
         return msgs
 
     # Whatsapp Export
@@ -126,15 +134,15 @@ def import_data(path_to_chatfile):
         match = re.search(WMsg, line)
         if match:
             msgs.append({
-                            'username': match.groupdict()['username'],
-                            'date': datetime.strptime(match.groupdict()['date'], '%m/%d/%y').date(),
-                            'month': match.groupdict()['month'],
-                            'day': match.groupdict()['day'],
-                            'year': match.groupdict()['year'],
-                            'time': datetime.strptime(match.groupdict()['time'], '%H:%M').time(),
-                            'hour': match.groupdict()['hour'],
-                            'minute': match.groupdict()['minute'],
-                        })
+                'username': match.groupdict()['username'],
+                'date': datetime.strptime(match.groupdict()['date'], '%m/%d/%y').date(),
+                'month': match.groupdict()['month'],
+                'day': match.groupdict()['day'],
+                'year': match.groupdict()['year'],
+                'time': datetime.strptime(match.groupdict()['time'], '%H:%M').time(),
+                'hour': match.groupdict()['hour'],
+                'minute': match.groupdict()['minute'],
+            })
     f.close()
 
     if len(msgs) == 0:
@@ -144,22 +152,22 @@ def import_data(path_to_chatfile):
     return msgs
 
 
-def export_data(msgs, filename):
-    '''
-    Export the imported data to a json file in a standar format
-    '''
+def export_data(msgs: List[Dict[str, Any]], filename: str) -> None:
+    """Export the imported data to a json file in a standar format."""
     if not filename:
         filename = 'export.json'
 
-    json_msgs = {'messages' : msgs}
+    json_msgs = {'messages': msgs}
 
     with open(filename, 'w') as outfile:
         json.dump(json_msgs, outfile, default=str)
 
 
-'''
+"""
 The command line options
-'''
+"""
+
+
 @click.command()
 @click.argument('path_to_chatfile')
 @click.option('-u', '--username', nargs=1, type=str, help='Show results for a particular User only (Provide the username)')
@@ -187,7 +195,8 @@ def controller(path_to_chatfile, username, percentage, constraint, conv_starters
     if activity:
         check_activity(msgs, username, start_date, end_date, show_graph)
     if interaction_curve:
-        interaction_curve_func(msgs, username=username, start_date=start_date, end_date=end_date, show_graph=show_graph)
+        interaction_curve_func(
+            msgs, username=username, start_date=start_date, end_date=end_date, show_graph=show_graph)
     if export:
         export_data(msgs, export_path)
     end = time()
