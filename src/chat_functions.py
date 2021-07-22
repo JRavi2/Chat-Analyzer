@@ -5,13 +5,6 @@ import numpy as np
 from datetime import datetime
 from sklearn.linear_model import LinearRegression
 
-try:
-    matplotlib.use('TkAgg')
-    CAN_SHOW_GRAPH = True
-except:
-    print('Warning: Tkinter is not installed, graphs will not be shown')
-    CAN_SHOW_GRAPH = False
-
 
 def find_msg_count(msgs, start_date=None, end_date=None):
     '''

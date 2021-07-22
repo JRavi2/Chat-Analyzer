@@ -5,6 +5,13 @@ import re
 from time import time
 from chat_functions import *
 
+try:
+    matplotlib.use('TkAgg')
+    CAN_SHOW_GRAPH = True
+except:
+    print('Warning: Tkinter is not installed, graphs will not be shown')
+    CAN_SHOW_GRAPH = False
+
 
 '''
 Define Regex Patterns
