@@ -1,8 +1,9 @@
-import click
 import json
 import re
-
 from time import time
+
+import click
+
 from chat_functions import *
 
 try:

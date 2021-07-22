@@ -1,8 +1,10 @@
 import sys
+
 sys.path.append("../src")
 
 import pytest
 from click.testing import CliRunner
+
 from chat_analyzer import controller
 
 

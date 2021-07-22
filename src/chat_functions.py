@@ -1,8 +1,8 @@
+from datetime import datetime
+
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-
-from datetime import datetime
 from sklearn.linear_model import LinearRegression
 
 
