@@ -1,14 +1,16 @@
 import json
 import re
 from datetime import datetime
+from json import JSONDecodeError
 from time import time
 from typing import Any, Dict, List
 
 import click
 import matplotlib
 
-from chat_functions import (calc_percentage, check_activity,
-                            find_conv_starters, interaction_curve_func)
+from chat_functions import (
+    calc_percentage, check_activity, find_conv_starters, interaction_curve_func
+)
 
 try:
     matplotlib.use('TkAgg')
@@ -45,7 +47,7 @@ WMsg = WDate + WTime + WUser + r'(?P<message>.*)'
 
 def import_data(path_to_chatfile: str) -> List[Dict[str, Any]]:
     """
-    Recognise and parse data from a chat export and return in a standardised format.
+    Recognise, parse data from a chat export and return in a standard format.
 
     Return prototype:
     msgs = [
@@ -98,7 +100,7 @@ def import_data(path_to_chatfile: str) -> List[Dict[str, Any]]:
                 })
 
         return msgs
-    except Exception:
+    except JSONDecodeError:
         pass
 
     # Signal Export
@@ -170,16 +172,22 @@ The command line options
 
 @click.command()
 @click.argument('path_to_chatfile')
-@click.option('-u', '--username', nargs=1, type=str, help='Show results for a particular User only (Provide the username)')
+@click.option('-u', '--username', nargs=1, type=str,
+              help='Show results for a particular User only (Provide the username)')
 @click.option('-c', '--constraint', nargs=2, type=str, help='Add date Constraints (format - mm/dd/yy)')
 @click.option('-sG', '--show-graph', is_flag=True, help='Show graph(s) for the selected options if available')
 @click.option('-p', '--percentage', is_flag=True, help='Show percentage contribution to the chat')
-@click.option('-cS', '--conv-starters', is_flag=True, help='Get the frequecy at which each person has started the conversation')
+@click.option('-cS', '--conv-starters', is_flag=True,
+              help='Get the frequecy at which each person has started the conversation')
 @click.option('-a', '--activity', is_flag=True, help='Show hourwise activity of users')
-@click.option('-iC', '--interaction-curve', is_flag=True, help='Tell whether the interaction of the user has increased or decreased')
+@click.option('-iC', '--interaction-curve', is_flag=True,
+              help='Tell whether the interaction of the user has increased or decreased')
 @click.option('-e', '--export', is_flag=True, help='Export the data into a standard json format')
 @click.option('-eP', '--export-path', nargs=1, type=str, help='Add the export path')
-def controller(path_to_chatfile, username, percentage, constraint, conv_starters, activity, interaction_curve, show_graph, export, export_path):
+def controller(
+        path_to_chatfile: str, username: str, percentage: bool, constraint: List[str], conv_starters: bool,
+        activity: bool, interaction_curve: bool, show_graph: bool, export: bool, export_path: str) -> None:
+    """The main CLI controller"""
     msgs = import_data(path_to_chatfile)
     start = time()
     if constraint:
@@ -188,17 +196,23 @@ def controller(path_to_chatfile, username, percentage, constraint, conv_starters
     else:
         start_date = None
         end_date = None
+
     if conv_starters:
         find_conv_starters(msgs, username)
+
     if percentage:
         calc_percentage(msgs, username, start_date, end_date, show_graph)
+
     if activity:
         check_activity(msgs, username, start_date, end_date, show_graph)
+
     if interaction_curve:
         interaction_curve_func(
             msgs, username=username, start_date=start_date, end_date=end_date, show_graph=show_graph)
+
     if export:
         export_data(msgs, export_path)
+
     end = time()
     print('Program Finished')
     print('Total time taken: {} seconds'.format(end - start))
