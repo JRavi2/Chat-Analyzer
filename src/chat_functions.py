@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.linear_model import LinearRegression
 
+import globals
+
 
 def find_msg_count(msgs: List[Dict[str, Any]], start_date: datetime = None, end_date: datetime = None) -> int:
     """Find the number of messages"""
@@ -54,7 +56,7 @@ def calc_percentage(msgs: List[Dict[str, Any]],
             print('Percentage: {}\n'.format(count/total_count*100))
 
         # For Graph
-        if show_graph and CAN_SHOW_GRAPH:
+        if show_graph and globals.CAN_SHOW_GRAPH:
             print('\nShowing graph....')
             users = list(user_count.keys())
             counts = list(user_count.values())
@@ -135,7 +137,7 @@ def check_activity(
         print('The user {} mostly stays active around {} Hours'.format(username, user_count[username]['max']))
 
         # For Graph
-        if show_graph and CAN_SHOW_GRAPH:
+        if show_graph and globals.CAN_SHOW_GRAPH:
             print('\nShowing graph....')
             hours = np.arange(24)
             counts = [0]*24
@@ -151,7 +153,7 @@ def check_activity(
             print('The user {} mostly stays active around {} Hours'.format(user, user_count[user]['max']))
 
         # For Graph
-        if show_graph and CAN_SHOW_GRAPH:
+        if show_graph and globals.CAN_SHOW_GRAPH:
             print('\nShowing graph....')
 
             for user in user_count:
@@ -210,7 +212,7 @@ def interaction_curve_func(
     ))
 
     # For Graph
-    if show_graph and CAN_SHOW_GRAPH:
+    if show_graph and globals.CAN_SHOW_GRAPH:
         print('Showing graph....')
         plt.plot(x, y, 'o', color='black')  # The point plot
         plt.plot(x, y_pred, color='red')  # The line plot

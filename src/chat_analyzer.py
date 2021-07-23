@@ -6,19 +6,14 @@ from time import time
 from typing import Any, Dict, List
 
 import click
-import matplotlib
 
+import globals
 from chat_functions import (
     calc_percentage, check_activity, find_conv_starters, interaction_curve_func
 )
 
-try:
-    matplotlib.use('TkAgg')
-    CAN_SHOW_GRAPH = True
-except ImportError:
-    print('Warning: Tkinter is not installed, graphs will not be shown')
-    CAN_SHOW_GRAPH = False
-
+# Initialize the global variables
+globals.init()
 
 """
 Define Regex Patterns
