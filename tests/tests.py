@@ -1,14 +1,15 @@
 import sys
 
-sys.path.append("../src")
-
-import pytest
 from click.testing import CliRunner
 
 from chat_analyzer import controller
 
+sys.path.append("../src")
+
 
 class Test_WA:
+    """The main test class for Whatsapp chat exports"""
+
     def test_percentage_all(self):
         runner = CliRunner()
         res = runner.invoke(controller, ['test_chats/wa.txt', '-p'])
@@ -122,8 +123,9 @@ Program Finished'''
         assert expected_res == res.output[:res.output[:-1].rfind('\n')]
 
 
-
 class Test_SG:
+    """The main test class for Signal chat exports"""
+
     def test_percentage_all(self):
         runner = CliRunner()
         res = runner.invoke(controller, ['test_chats/sg.md', '-p'])
