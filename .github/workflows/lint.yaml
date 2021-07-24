@@ -27,5 +27,8 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Run pre-commit hooks.
-        uses: pre-commit/action@v2.0.3
+      # Setup linter
+      - name: Run linters
+        uses: wearerequired/lint-action@v1
+        with:
+          flake8: true
