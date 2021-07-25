@@ -1,10 +1,10 @@
 import sys
 
+sys.path.append("../src")
+
 from click.testing import CliRunner
 
 from chat_analyzer import controller
-
-sys.path.append("../src")
 
 
 class Test_WA:
