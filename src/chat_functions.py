@@ -224,6 +224,10 @@ def interaction_curve_func(
         print('Showing graph....')
         plt.plot(x, y, 'o', color='black')  # The point plot
         plt.plot(x, y_pred, color='red')  # The line plot
-        plt.xticks(dates, str_dates)
-        plt.locator_params(axis='x', nbins=4)
+        plt.xticks(ticks=dates, labels=str_dates, rotation=45)
+        plt.locator_params(axis='x', nbins=10)
+        plt.tight_layout()
+        plt.xlabel('Date')
+        plt.ylabel('Message count')
+        plt.title('Regression curve for interactions (no. of messages) in the chat')
         plt.show()
