@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -37,6 +37,28 @@ def find_freq(msgs: List[Dict[str, Any]],
         return user_count
 
 
+def generate_graph_precentages(counts: Dict[str, int], total_count: int) -> Tuple[List[str], List[float]]:
+    """Generate the percentage data from counts"""
+    users = []
+    percs = []
+    minor_perc = 0
+    minor_users = ''
+    for user, count in counts.items():
+        perc = count/total_count * 100
+        if perc > 1.0:
+            users.append(user)
+            percs.append(perc)
+        else:
+            minor_perc += perc
+            minor_users += user if minor_users == '' else ', ' + user
+
+    if minor_users != "":
+        users.append(minor_users)
+        percs.append(minor_perc)
+
+    return (users, percs)
+
+
 def calc_percentage(msgs: List[Dict[str, Any]],
                     username: datetime = None, start_date: datetime = None, end_date: datetime = None,
                     show_graph: datetime = False) -> None:
@@ -58,13 +80,12 @@ def calc_percentage(msgs: List[Dict[str, Any]],
         # For Graph
         if show_graph and globals.CAN_SHOW_GRAPH:
             print('\nShowing graph....')
-            users = list(user_count.keys())
-            counts = list(user_count.values())
-            x = np.arange(len(users))
-            #  width = 0.35
-            plt.bar(x, counts, tick_label=users)
-            plt.xticks(rotation=60)
+            users, percs = generate_graph_precentages(user_count, total_count)
+            plt.pie(x=percs, autopct='%1.1f%%', shadow=True, startangle=90)
+            plt.axis('equal')
+            plt.legend(users)
             plt.tight_layout()
+            plt.title('Percentage contirbution of each user in the chat')
             plt.show()
 
 
