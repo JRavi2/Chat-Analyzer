@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.linear_model import LinearRegression
 
-import globals
+import chat_analyzer.globals
 
 
 def find_msg_count(msgs: List[Dict[str, Any]], start_date: datetime = None, end_date: datetime = None) -> int:

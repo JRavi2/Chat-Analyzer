@@ -7,8 +7,8 @@ from typing import Any, Dict, List
 
 import click
 
-import globals
-from chat_functions import (
+import chat_analyzer.globals
+from chat_analyzer.chat_functions import (
     calc_percentage, check_activity, find_conv_starters, interaction_curve_func
 )
 
