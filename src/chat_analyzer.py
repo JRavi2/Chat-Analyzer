@@ -150,14 +150,16 @@ def import_data(path_to_chatfile: str) -> List[Dict[str, Any]]:
 
 
 def export_data(msgs: List[Dict[str, Any]], filename: str) -> None:
-    """Export the imported data to a json file in a standar format."""
+    """Export the imported data to a json file in a standard format."""
     if not filename:
         filename = 'export.json'
 
     json_msgs = {'messages': msgs}
 
     with open(filename, 'w') as outfile:
-        json.dump(json_msgs, outfile, default=str)
+        json.dump(json_msgs, outfile, default=str, indent=2)
+
+    print("Chat data exported to {}".format(filename))
 
 
 """
@@ -183,8 +185,11 @@ def controller(
         path_to_chatfile: str, username: str, percentage: bool, constraint: List[str], conv_starters: bool,
         activity: bool, interaction_curve: bool, show_graph: bool, export: bool, export_path: str) -> None:
     """The main CLI controller"""
+    # Import the data
     msgs = import_data(path_to_chatfile)
     start = time()
+
+    # Set the date constraints (if present)
     if constraint:
         start_date = datetime.strptime(constraint[0], '%m/%d/%y').date()
         end_date = datetime.strptime(constraint[1], '%m/%d/%y').date()
