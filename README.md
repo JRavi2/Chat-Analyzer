@@ -14,6 +14,8 @@ If you want to run your own analysis, the program can also export the chat data 
 
 The program currently works for Signal, Telegram and Whatsapp chat exports
 
+To know how to export chats from the supported platforms, checkout the steps [here](docs/how-to-export.md)
+
 ## How to Run
 
 First install the required dependencies using the command:
