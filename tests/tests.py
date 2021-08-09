@@ -65,13 +65,13 @@ Program Finished'''
     def test_conv_starters_all(self):
         runner = CliRunner()
         res = runner.invoke(controller, ['test_chats/wa.txt', '-cS'])
-        expected_res = '''The user C started consversation 255 time(s)
-The user E started consversation 159 time(s)
-The user A started consversation 302 time(s)
-The user D started consversation 283 time(s)
-The user B started consversation 187 time(s)
-The user F started consversation 89 time(s)
-The user G started consversation 4 time(s)
+        expected_res = '''The user C started conversation 255 time(s)
+The user E started conversation 159 time(s)
+The user A started conversation 302 time(s)
+The user D started conversation 283 time(s)
+The user B started conversation 187 time(s)
+The user F started conversation 89 time(s)
+The user G started conversation 4 time(s)
 Program Finished'''
         assert expected_res == res.output[:res.output[:-1].rfind('\n')]
 
@@ -79,7 +79,7 @@ Program Finished'''
     def test_conv_starters_user(self):
         runner = CliRunner()
         res = runner.invoke(controller, ['test_chats/wa.txt', '-cS', '-u', 'A'])
-        expected_res = '''The user A started consversation 302 time(s)
+        expected_res = '''The user A started conversation 302 time(s)
 Program Finished'''
         assert expected_res == res.output[:res.output[:-1].rfind('\n')]
 
@@ -199,12 +199,12 @@ Program Finished'''
         runner = CliRunner()
         res = runner.invoke(controller, ['test_chats/sg.md', '-cS'])
         expected_res = '''Signal chat recognized
-The user F started consversation 4 time(s)
-The user D started consversation 2 time(s)
-The user E started consversation 2 time(s)
-The user B started consversation 1 time(s)
-The user A started consversation 1 time(s)
-The user K started consversation 2 time(s)
+The user F started conversation 4 time(s)
+The user D started conversation 2 time(s)
+The user E started conversation 2 time(s)
+The user B started conversation 1 time(s)
+The user A started conversation 1 time(s)
+The user K started conversation 2 time(s)
 Program Finished'''
         assert expected_res == res.output[:res.output[:-1].rfind('\n')]
 
@@ -213,7 +213,7 @@ Program Finished'''
         runner = CliRunner()
         res = runner.invoke(controller, ['test_chats/sg.md', '-cS', '-u', 'A'])
         expected_res = '''Signal chat recognized
-The user A started consversation 1 time(s)
+The user A started conversation 1 time(s)
 Program Finished'''
         assert expected_res == res.output[:res.output[:-1].rfind('\n')]
 

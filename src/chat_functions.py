@@ -62,7 +62,7 @@ def generate_graph_precentages(counts: Dict[str, int], total_count: int) -> Tupl
 def calc_percentage(msgs: List[Dict[str, Any]],
                     username: datetime = None, start_date: datetime = None, end_date: datetime = None,
                     show_graph: datetime = False) -> None:
-    """Calc the metrics of how much the entered user has spoken in the chat within the given constraint(if provided)"""
+    """Calculate the percentage contirbution of each user (or a given user)"""
     user_count = find_freq(msgs, username, start_date, end_date)
     total_count = find_msg_count(msgs, start_date, end_date)
 
@@ -85,12 +85,12 @@ def calc_percentage(msgs: List[Dict[str, Any]],
             plt.axis('equal')
             plt.legend(users)
             plt.tight_layout()
-            plt.title('Percentage contirbution of each user in the chat')
+            plt.title('Percentage contribution of each user in the chat')
             plt.show()
 
 
 def find_conv_starters(msgs: List[Dict[str, Any]], username: str = None) -> None:
-    """Find out who has started a conversations how many times"""
+    """Find out how many times each user (or a given user) has started a conversation"""
     total_diff = 0
     count = 1
     last_msg = None
@@ -116,17 +116,17 @@ def find_conv_starters(msgs: List[Dict[str, Any]], username: str = None) -> None
             count += 1
 
     if username:
-        print('The user {} started consversation {} time(s)'.format(username, user_count[username]))
+        print('The user {} started conversation {} time(s)'.format(username, user_count[username]))
     else:
         for user, count in user_count.items():
-            print('The user {} started consversation {} time(s)'.format(user, count))
+            print('The user {} started conversation {} time(s)'.format(user, count))
 
 
 def check_activity(
         msgs: List[Dict[str, Any]], username: str = None,
         start_date: datetime = None, end_date: datetime = None, show_graph: bool = False) -> None:
     """
-    Get the time of the day when each user(or a particular user) is most active
+    Get the time of the day when each user (or a given user) is most active
 
     Prototype for the user_count variable
     user_count = {
@@ -201,7 +201,7 @@ def check_activity(
 def interaction_curve_func(
         msgs: List[Dict[str, Any]], username: str = None,
         start_date: datetime = None, end_date: datetime = None, show_graph: bool = False) -> None:
-    """Use Linear Regression to predict whether there has been an increase or decrease in the number of messages"""
+    """Use Linear Regression to figure out whether there has been an increase or decrease in the interactions"""
     cur_date = ''
     cur_freq = 0
     dates = []
