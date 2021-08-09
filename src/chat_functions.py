@@ -168,7 +168,7 @@ def check_activity(
             plt.plot(hours, counts)
             hours = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11',
                      '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23']
-            plt.xticks(ticks=np.arange(24), labels=globals.hours_list)
+            plt.xticks(ticks=np.arange(24), labels=globals.HOURS_LIST)
             plt.tight_layout()
             plt.xlabel('Time of day (in Hours)')
             plt.ylabel('Message Count')
@@ -189,7 +189,7 @@ def check_activity(
                     if hour != 'max':
                         counts[int(hour)] = count
                 plt.plot(hours, counts, label=user)
-            plt.xticks(ticks=np.arange(24), labels=globals.hours_list)
+            plt.xticks(ticks=np.arange(24), labels=globals.HOURS_LIST)
             plt.tight_layout()
             plt.legend()
             plt.xlabel('Time of day (in Hours)')

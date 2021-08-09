@@ -97,6 +97,13 @@ def import_data(path_to_chatfile: str) -> List[Dict[str, Any]]:
         return msgs
     except JSONDecodeError:
         pass
+    except KeyError:
+        try:
+            f.seek(0)
+            msgs = json.load(f)['messages']
+            return msgs
+        except KeyError:
+            pass
 
     # Signal Export
     f.seek(0)
