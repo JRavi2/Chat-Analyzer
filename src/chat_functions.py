@@ -103,11 +103,16 @@ def find_conv_starters(msgs: List[Dict[str, Any]], username: str = None) -> None
             last_msg = curr_msg
             count += 1
 
-    if username:
-        print('The user {} started conversation {} time(s)'.format(username, user_count[username]))
-    else:
+    # Convert the counts to a tabulate friendly format
+    res = [['User', 'Count']]
+
+    if not username:
         for user, count in user_count.items():
-            print('The user {} started conversation {} time(s)'.format(user, count))
+            res.append([user, count])
+    else:
+        res.append([username, user_count[username]])
+
+    return res
 
 
 def check_activity(

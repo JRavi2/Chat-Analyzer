@@ -207,7 +207,9 @@ def controller(
         end_date = None
 
     if conv_starters:
-        find_conv_starters(msgs, username)
+        table_data = find_conv_starters(msgs, username)
+        print(tabulate(table_data, headers='firstrow', tablefmt='fancy_grid',
+              colalign=('center', 'center'), floatfmt='.4f'))
 
     if percentage:
         table_data, total_count = calc_percentage(msgs, username, start_date, end_date, show_graph)
