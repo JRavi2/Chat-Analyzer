@@ -4,12 +4,14 @@ from datetime import datetime
 from json import JSONDecodeError
 from time import time
 from typing import Any, Dict, List
+import matplotlib.pyplot as plt
 
 import click
+from tabulate import tabulate
 
 import globals
 from chat_functions import (
-    calc_percentage, check_activity, find_conv_starters, interaction_curve_func
+    calc_percentage, check_activity, find_conv_starters, interaction_curve_func, generate_graph_precentages
 )
 
 # Initialize the global variables
@@ -208,7 +210,22 @@ def controller(
         find_conv_starters(msgs, username)
 
     if percentage:
-        calc_percentage(msgs, username, start_date, end_date, show_graph)
+        table_data, total_count = calc_percentage(msgs, username, start_date, end_date, show_graph)
+
+        print('Total No. of Messages: {}\n'.format(total_count))
+        print(tabulate(table_data, headers='firstrow', tablefmt='fancy_grid',
+              colalign=('center', 'center', 'center'), floatfmt='.4f'))
+
+        # For Graph
+        if show_graph and globals.CAN_SHOW_GRAPH:
+            print('\nShowing graph....')
+            users, percs = generate_graph_precentages(table_data[1:])
+            plt.pie(x=percs, autopct='%1.1f%%', shadow=True, startangle=90)
+            plt.axis('equal')
+            plt.legend(users)
+            plt.tight_layout()
+            plt.title('Percentage contribution of each user in the chat')
+            plt.show()
 
     if activity:
         check_activity(msgs, username, start_date, end_date, show_graph)

@@ -37,20 +37,20 @@ def find_freq(msgs: List[Dict[str, Any]],
         return user_count
 
 
-def generate_graph_precentages(counts: Dict[str, int], total_count: int) -> Tuple[List[str], List[float]]:
+def generate_graph_precentages(counts: List[Any]) -> Tuple[List[str], List[float]]:
     """Generate the percentage data from counts"""
     users = []
     percs = []
     minor_perc = 0
     minor_users = ''
-    for user, count in counts.items():
-        perc = count/total_count * 100
+    for user_count in counts:
+        perc = user_count[2]
         if perc > 1.0:
-            users.append(user)
+            users.append(user_count[0])
             percs.append(perc)
         else:
             minor_perc += perc
-            minor_users += user if minor_users == '' else ', ' + user
+            minor_users += user_count[0] if minor_users == '' else ', ' + user_count[0]
 
     if minor_users != "":
         users.append(minor_users)
@@ -65,28 +65,16 @@ def calc_percentage(msgs: List[Dict[str, Any]],
     """Calculate the percentage contirbution of each user (or a given user)"""
     user_count = find_freq(msgs, username, start_date, end_date)
     total_count = find_msg_count(msgs, start_date, end_date)
+    res = [['Username', 'Message Count', 'Percentage']]
 
-    print('Total Count: {}\n'.format(total_count))
-
+    # Return the results in a tabulate friendly format
     if username:
-        print('Message Count: {}'.format(user_count))
-        print('Percentage: {}'.format(user_count/total_count*100))
+        res.append([username, user_count, user_count/total_count*100])
     else:
         for user, count in user_count.items():
-            print('For the user {}'.format(user))
-            print('Message Count: {}'.format(count))
-            print('Percentage: {}\n'.format(count/total_count*100))
+            res.append([user, count, count/total_count*100])
 
-        # For Graph
-        if show_graph and globals.CAN_SHOW_GRAPH:
-            print('\nShowing graph....')
-            users, percs = generate_graph_precentages(user_count, total_count)
-            plt.pie(x=percs, autopct='%1.1f%%', shadow=True, startangle=90)
-            plt.axis('equal')
-            plt.legend(users)
-            plt.tight_layout()
-            plt.title('Percentage contribution of each user in the chat')
-            plt.show()
+    return (res, total_count)
 
 
 def find_conv_starters(msgs: List[Dict[str, Any]], username: str = None) -> None:
