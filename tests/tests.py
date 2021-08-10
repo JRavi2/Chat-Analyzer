@@ -13,7 +13,8 @@ class Test_WA:
     def test_percentage_all(self):
         runner = CliRunner()
         res = runner.invoke(controller, ['test_chats/wa.txt', '-p'])
-        expected_res = '''Total Count: 39939
+        expected_res = '''Whatsapp chat recognized
+Total Count: 39939
 
 For the user A
 Message Count: 6872
@@ -54,7 +55,8 @@ Program Finished'''
     def test_percentage_user(self):
         runner = CliRunner()
         res = runner.invoke(controller, ['test_chats/wa.txt', '-p', '-u', 'A'])
-        expected_res = '''Total Count: 39939
+        expected_res = '''Whatsapp chat recognized
+Total Count: 39939
 
 Message Count: 6872
 Percentage: 17.206239515260773
@@ -65,7 +67,8 @@ Program Finished'''
     def test_conv_starters_all(self):
         runner = CliRunner()
         res = runner.invoke(controller, ['test_chats/wa.txt', '-cS'])
-        expected_res = '''The user C started conversation 255 time(s)
+        expected_res = '''Whatsapp chat recognized
+The user C started conversation 255 time(s)
 The user E started conversation 159 time(s)
 The user A started conversation 302 time(s)
 The user D started conversation 283 time(s)
@@ -79,7 +82,8 @@ Program Finished'''
     def test_conv_starters_user(self):
         runner = CliRunner()
         res = runner.invoke(controller, ['test_chats/wa.txt', '-cS', '-u', 'A'])
-        expected_res = '''The user A started conversation 302 time(s)
+        expected_res = '''Whatsapp chat recognized
+The user A started conversation 302 time(s)
 Program Finished'''
         assert expected_res == res.output[:res.output[:-1].rfind('\n')]
 
@@ -87,7 +91,8 @@ Program Finished'''
     def test_activity_all(self):
         runner = CliRunner()
         res = runner.invoke(controller, ['test_chats/wa.txt', '-a'])
-        expected_res = '''The user A mostly stays active around 15 Hours
+        expected_res = '''Whatsapp chat recognized
+The user A mostly stays active around 15 Hours
 The user B mostly stays active around 15 Hours
 The user C mostly stays active around 15 Hours
 The user D mostly stays active around 15 Hours
@@ -102,7 +107,8 @@ Program Finished'''
     def test_activity_user(self):
         runner = CliRunner()
         res = runner.invoke(controller, ['test_chats/wa.txt', '-a', '-u', 'A'])
-        expected_res = '''The user A mostly stays active around 15 Hours
+        expected_res = '''Whatsapp chat recognized
+The user A mostly stays active around 15 Hours
 Program Finished'''
         assert expected_res == res.output[:res.output[:-1].rfind('\n')]
 
@@ -110,7 +116,8 @@ Program Finished'''
     def test_interaction_curve_all(self):
         runner = CliRunner()
         res = runner.invoke(controller, ['test_chats/wa.txt', '-iC'])
-        expected_res = '''The interactions in this chat have increased!
+        expected_res = '''Whatsapp chat recognized
+The interactions in this chat have increased!
 Program Finished'''
         assert expected_res == res.output[:res.output[:-1].rfind('\n')]
 
@@ -118,7 +125,8 @@ Program Finished'''
     def test_interaction_curve_user(self):
         runner = CliRunner()
         res = runner.invoke(controller, ['test_chats/wa.txt', '-iC', '-u', 'A'])
-        expected_res = '''Your interactions in this chat have increased!
+        expected_res = '''Whatsapp chat recognized
+Your interactions in this chat have increased!
 Program Finished'''
         assert expected_res == res.output[:res.output[:-1].rfind('\n')]
 

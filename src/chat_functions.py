@@ -17,7 +17,7 @@ def find_msg_count(msgs: List[Dict[str, Any]], start_date: datetime = None, end_
 
     for msg in msgs:
         date = msg['date']
-        if not start_date or (start_date and start_date < date < end_date):
+        if start_date and start_date < date < end_date:
             count += 1
     return count
 

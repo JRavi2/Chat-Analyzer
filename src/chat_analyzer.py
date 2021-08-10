@@ -12,12 +12,21 @@ from chat_functions import (
     calc_percentage, check_activity, find_conv_starters, interaction_curve_func
 )
 
-# Initialize the global variables
+# Initialize the globals
 globals.init()
 
 """
 Define Regex Patterns
 """
+# For Whatsapp chat exports
+WUser = r'(- (?P<username>[^:]*):)'  # To get the user's name
+# To get the date
+WDate = r'(?P<date>(?P<month>[0-9]{1,2})[-\/]{1}(?P<day>[0-9]{1,2})[-\/]{1}(?P<year>[0-9]{2}))'
+# To get the time
+WTime = r'(, (?P<time>(?P<hour>[0-9]{2}):(?P<minute>[0-9]{2})) )'
+# Finally to get the parsed message
+WMsg = WDate + WTime + WUser + r'(?P<message>.*)'
+
 # For Signal chat exports
 SDate = r'(?P<date>(?P<year>[0-9]{4})-(?P<month>[0-9]{2})-(?P<day>[0-9]{2}))'
 STime = r'(?P<time>(?P<hour>[0-9]{2}):(?P<minute>[0-9]{2}))'
@@ -30,19 +39,10 @@ TDate = r'(?P<date>(?P<year>[0-9]{4})-(?P<month>[0-9]{2})-(?P<day>[0-9]{2}))'
 TTime = r'(?P<time>(?P<hour>[0-9]{2}):(?P<minute>[0-9]{2}):(?P<seconds>[0-9]{2}))'
 TDateTime = TDate + r'T' + TTime
 
-# For Whatsapp chat exports
-WUser = r'(- (?P<username>[^:]*):)'  # To get the user's name
-# To get the date
-WDate = r'(?P<date>(?P<month>[0-9]{1,2})[-\/]{1}(?P<day>[0-9]{1,2})[-\/]{1}(?P<year>[0-9]{2}))'
-# To get the time
-WTime = r'(, (?P<time>(?P<hour>[0-9]{2}):(?P<minute>[0-9]{2})) )'
-# Finally to get the parsed message
-WMsg = WDate + WTime + WUser + r'(?P<message>.*)'
-
 
 def import_data(path_to_chatfile: str) -> List[Dict[str, Any]]:
     """
-    Recognise, parse data from a chat export and return in a standard format.
+    Recognize, parse data from a chat export and return in a standard format.
 
     Return prototype:
     msgs = [
@@ -93,30 +93,41 @@ def import_data(path_to_chatfile: str) -> List[Dict[str, Any]]:
                     'hour': date_match.groupdict()['hour'],
                     'minute': date_match.groupdict()['minute'],
                 })
-
+        f.close()
         return msgs
-    except JSONDecodeError:
-        pass
+
     except KeyError:
+        # Check for self-exported file
         try:
             f.seek(0)
             msgs = json.load(f)['messages']
+            print('Self-exported file recognized')
+            f.close()
             return msgs
+
+        # Not a Telegram or self exported file but a JSON, so can't be of any other origin
         except KeyError:
-            pass
+            print('Invalid file!')
+            exit()
+
+    # Not a JSON file, so can't be a Telegram or self exported file, check for other types
+    except JSONDecodeError:
+        pass
 
     # Signal Export
     f.seek(0)
     isSignal = False
-    for line in f:
+    for line_num, line in enumerate(f):
+        if line_num > globals.SIGNAL_MEMBER_LIMIT:
+            break
         match = re.search(SMsg, line)
         if match:
             isSignal = True
             break
 
     if isSignal:
-        f.seek(0)
         print('Signal chat recognized')
+        f.seek(0)
         for line in f:
             match = re.search(SMsg, line)
             if match:
@@ -130,30 +141,42 @@ def import_data(path_to_chatfile: str) -> List[Dict[str, Any]]:
                     'hour': match.groupdict()['hour'],
                     'minute': match.groupdict()['minute'],
                 })
+        f.close()
         return msgs
 
     # Whatsapp Export
     f.seek(0)
-    for line in f:
+    isWa = False
+    for line_num, line in enumerate(f):
+        if line_num > globals.WHATSAPP_MEMBER_LIMIT:
+            break
         match = re.search(WMsg, line)
         if match:
-            msgs.append({
-                'username': match.groupdict()['username'],
-                'date': datetime.strptime(match.groupdict()['date'], '%m/%d/%y').date(),
-                'month': match.groupdict()['month'],
-                'day': match.groupdict()['day'],
-                'year': match.groupdict()['year'],
-                'time': datetime.strptime(match.groupdict()['time'], '%H:%M').time(),
-                'hour': match.groupdict()['hour'],
-                'minute': match.groupdict()['minute'],
-            })
+            isWa = True
+            break
+
+    if isWa:
+        print('Whatsapp chat recognized')
+        f.seek(0)
+        for line in f:
+            match = re.search(WMsg, line)
+            if match:
+                msgs.append({
+                    'username': match.groupdict()['username'],
+                    'date': datetime.strptime(match.groupdict()['date'], '%m/%d/%y').date(),
+                    'month': match.groupdict()['month'],
+                    'day': match.groupdict()['day'],
+                    'year': match.groupdict()['year'],
+                    'time': datetime.strptime(match.groupdict()['time'], '%H:%M').time(),
+                    'hour': match.groupdict()['hour'],
+                    'minute': match.groupdict()['minute'],
+                })
+        f.close()
+        return msgs
     f.close()
 
-    if len(msgs) == 0:
-        print('Invalid file!')
-        exit()
-
-    return msgs
+    print('Invalid file!')
+    exit()
 
 
 def export_data(msgs: List[Dict[str, Any]], filename: str) -> None:
