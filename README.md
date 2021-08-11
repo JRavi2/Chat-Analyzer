@@ -8,7 +8,7 @@ This program analyzes the given exported chat for:
 - How many times each user has started a conversation in the chat
 - Has a user's (or the whole chat's) interaction increased or decreased
 
-It also allows the user to add some constraints (Like genrating results only for a particular user and/or genrating results within a given time frame) and generate graphs for some actions.
+It also allows the user to add some constraints (Like generating results only for a particular user and/or generating results within a given time frame) and generate graphs for some actions.
 
 If you want to run your own analysis, to avoid parsing the chatfile and extracting it's data yourself, the program can also export the chat data after converting it into a standard json format.
 
@@ -20,7 +20,7 @@ First install the required dependencies using the command:
 
     pip install -r requirements.txt
 
-Then you can run the program, by going to to `src` directory and then running the following command:
+Then you can run the program, by entering the `src` directory and then running the following command:
 
     python chat_analyzer.py <options> <path_to_chatfile>
 
