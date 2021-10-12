@@ -1,2 +1,5 @@
 __pycache__/
 .vim/
+build/
+dist/
+src/chat_analyzer.egg-info/
