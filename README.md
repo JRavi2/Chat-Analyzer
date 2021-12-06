@@ -2,7 +2,7 @@
 
 ## Description
 
-![](images/img2.jpeg)
+
 
 This program analyzes the given exported chat for:
 - What is the percentage contribution (in terms of number of messages) of a user in the chat
@@ -35,3 +35,13 @@ To know about the available options run the command:
 To test changes, enter the `tests` directory and run the following command:
 
     pytest tests.py
+    
+    
+## Output
+
+The program can provide various graphs upon request (wherever possible)
+For example:
+![](images/img2.jpeg)
+![](images/img3.jpeg)
+![](images/img4.jpeg)
+
