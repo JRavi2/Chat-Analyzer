@@ -23,7 +23,7 @@ WUser = r'(- (?P<username>[^:]*):)'  # To get the user's name
 # To get the date
 WDate = r'(?P<date>(?P<month>[0-9]{1,2})[-\/]{1}(?P<day>[0-9]{1,2})[-\/]{1}(?P<year>[0-9]{2}))'
 # To get the time
-WTime = r'(, (?P<time>(?P<hour>[0-9]{2}):(?P<minute>[0-9]{2})) )'
+WTime = r'(, (?P<time>(?P<hour>[0-9]{1,2}):(?P<minute>[0-9]{2}) (?P<ampm>[AP]M)) )'
 # Finally to get the parsed message
 WMsg = WDate + WTime + WUser + r'(?P<message>.*)'
 
@@ -59,7 +59,7 @@ def import_data(path_to_chatfile: str) -> List[Dict[str, Any]]:
     ]
     """
     try:
-        f = open(path_to_chatfile, 'r')
+        f = open(path_to_chatfile, 'r', encoding="utf-8", errors="ignore")
     except FileNotFoundError:
         print('File not found!!')
         exit()
@@ -154,7 +154,7 @@ def import_data(path_to_chatfile: str) -> List[Dict[str, Any]]:
         if match:
             isWa = True
             break
-
+  
     if isWa:
         print('Whatsapp chat recognized')
         f.seek(0)
@@ -167,9 +167,10 @@ def import_data(path_to_chatfile: str) -> List[Dict[str, Any]]:
                     'month': match.groupdict()['month'],
                     'day': match.groupdict()['day'],
                     'year': match.groupdict()['year'],
-                    'time': datetime.strptime(match.groupdict()['time'], '%H:%M').time(),
+                    'time': datetime.strptime(match.groupdict()['time'], '%I:%M %p').time(),
                     'hour': match.groupdict()['hour'],
                     'minute': match.groupdict()['minute'],
+                    'ampm': match.groupdict()['ampm'],
                 })
         f.close()
         return msgs
