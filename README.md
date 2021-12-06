@@ -2,6 +2,8 @@
 
 ## Description
 
+![](images/img2.jpeg)
+
 This program analyzes the given exported chat for:
 - What is the percentage contribution (in terms of number of messages) of a user in the chat
 - How active each user is in the chat
