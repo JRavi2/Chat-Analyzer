@@ -154,7 +154,7 @@ def import_data(path_to_chatfile: str) -> List[Dict[str, Any]]:
         if match:
             isWa = True
             break
-  
+
     if isWa:
         print('Whatsapp chat recognized')
         f.seek(0)
