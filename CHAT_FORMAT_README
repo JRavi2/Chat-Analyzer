@@ -1,0 +1,19 @@
+This is a Readme to explain the chat_formatting.py. 
+
+How to use:
+
+python3 chat_formatting.py input_file_name output_file_name input_date_format 
+
+Explanation:
+
+input_file_name: It is your raw exported whatapp chat 
+
+output_file_name: This will be your formatted chat file after you execute the code.
+
+input_date_format: Now, every device has different way to export the chat and mostly the date format is conflicted. The code uses mmddyy format but several exports will have ddmmyy as the date format. It would be tiresome to let the code handle all of them. So in this case you just have to input the format you have and the code should convert it into acceptable format. Right now it only takes two format but it isn't difficult to do so. 
+
+OUTPUT:
+
+Once running succesfully it will generate two output files. one by the name you provided "output_file_name" and other is "formatted_time.txt". The second one is using the fix provided in the repo which cchanged the time from original 24hr format to 12 hr format. 
+
+So basically the code without the suggested fix should use output_file_name as the chat file and if the fix is approved then you should use formatted_time.txt.
