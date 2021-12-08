@@ -41,7 +41,8 @@ To test changes, enter the `tests` directory and run the following command:
 
 The program can provide various graphs upon request (wherever possible)
 For example:
-![](images/img2.jpeg)
-![](images/img3.jpeg)
-![](images/img4.jpeg)
+![img2](https://user-images.githubusercontent.com/84586244/14516![img3](https://user-images.githubusercontent.com/84586244/145166114-e6c8eafd-7d4c-4c06-9e78-6db4c8a2ad1b.jpeg)
+6108-1b5c4110-1e4a-4d05-9325-163c7b31f0a7.jpeg)
+![img4](https://user-images.githubusercontent.com/84586244/145166146-c8186b67-8f9b-4572-8f20-329fdb3bcbbc.jpeg)
+
 
