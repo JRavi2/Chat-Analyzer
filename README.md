@@ -2,6 +2,8 @@
 
 ## Description
 
+
+
 This program analyzes the given exported chat for:
 - What is the percentage contribution (in terms of number of messages) of a user in the chat
 - How active each user is in the chat
@@ -33,3 +35,15 @@ To know about the available options run the command:
 To test changes, enter the `tests` directory and run the following command:
 
     pytest tests.py
+    
+    
+## Sample Plots
+
+The program can provide various graphs of behavioral analytics upon request (wherever possible)
+For example:
+<p align="center">
+    <img src="https://user-images.githubusercontent.com/84586244/145166287-5643a572-ac17-4795-bdc6-43ab82a6274c.jpeg" /> <br>
+    <img src="https://user-images.githubusercontent.com/84586244/145522800-17787372-c11f-43e3-9b5d-916a423ad747.jpeg" /><br>
+    <img src="https://user-images.githubusercontent.com/84586244/145166146-c8186b67-8f9b-4572-8f20-329fdb3bcbbc.jpeg" />
+</p>
+
