@@ -5,6 +5,7 @@ from json import JSONDecodeError
 from time import time
 from typing import Any, Dict, List
 import matplotlib.pyplot as plt
+import numpy as np
 
 import click
 from tabulate import tabulate
@@ -230,11 +231,64 @@ def controller(
             plt.show()
 
     if activity:
-        check_activity(msgs, username, start_date, end_date, show_graph)
+        if username:
+            list_activity, list_graph = check_activity(msgs, username, start_date, end_date, show_graph)
+            print('The user {} mostly stays active around {} Hours'.format(list_activity[0], list_activity[1]))
+            if show_graph and globals.CAN_SHOW_GRAPH:
+                print('\nShowing graph....')
+                plt.plot(list_graph[0], list_graph[1])
+                hours = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11',
+                         '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23']
+                plt.xticks(ticks=np.arange(24), labels=hours)
+                plt.tight_layout()
+                plt.xlabel('Time of day (in Hours)')
+                plt.ylabel('Message Count')
+                plt.title('Activity of each user')
+                plt.show()
+        else:
+            user_count = check_activity(msgs, username, start_date, end_date, show_graph)
+            for user in user_count:
+                print('The user {} mostly stays active around {} Hours'.format(user, user_count[user]['max']))
+            # For Graph
+            if show_graph and globals.CAN_SHOW_GRAPH:
+                print('\nShowing graph')
+            for user in user_count:
+                hours = np.arange(24)
+                counts = [0]*24
+                for hour, count in user_count[user].items():
+                    if hour != 'max':
+                        counts[int(hour)] = count
+                plt.plot(hours, counts, label=user)
+            hours = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11',
+                     '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23']
+            plt.xticks(ticks=np.arange(24), labels=hours)
+            plt.tight_layout()
+            plt.legend()
+            plt.xlabel('Time of day (in Hours)')
+            plt.ylabel('Message Count')
+            plt.title('Activity of each user')
+            plt.show()
 
     if interaction_curve:
-        interaction_curve_func(
+        slope_sign_pred, str_dates, x, y, y_pred, dates = interaction_curve_func(
             msgs, username=username, start_date=start_date, end_date=end_date, show_graph=show_graph)
+        print('{} interactions in this chat have {}!'.format(
+            'Your' if username else 'The',
+            'decreased' if slope_sign_pred < 0 else 'increased'
+        ))
+        #Graph
+        if show_graph and globals.CAN_SHOW_GRAPH:
+            print('Showing graph....')
+            plt.plot(x, y, 'o', color='black')  # The point plot
+            plt.plot(x, y_pred, color='red')  # The line plot
+            plt.xticks(ticks=dates, labels=str_dates, rotation=45)
+            plt.locator_params(axis='x', nbins=10)
+            plt.tight_layout()
+            plt.xlabel('Date')
+            plt.ylabel('Message count')
+            plt.title('Regression curve for interactions (no. of messages) in the chat')
+            plt.show()
+
 
     if export:
         export_data(msgs, export_path)
