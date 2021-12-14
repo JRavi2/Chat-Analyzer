@@ -184,8 +184,8 @@ def import_data(path_to_chatfile: str) -> List[Dict[str, Any]]:
                         datetime_object = datetime.strptime(match.groupdict()['date'], '%y/%m/%d')
                         date_finalstring = '%y/%m/%d'
                         month = 'feild2'
-                        day = 'feild1'
-                        year = 'feild3'
+                        day = 'feild3'
+                        year = 'feild1'
                         break
         # If all lines in the chat satisfies the format m/d/y, therefore assign the string to the final string
         if date_finalstring is None :
