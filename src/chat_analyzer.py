@@ -181,7 +181,7 @@ def import_data(path_to_chatfile: str) -> List[Dict[str, Any]]:
                     except:
                         # If above two cases are failed,String and fields are fixed.
                         # Hence there is no point in continuing the loop
-                        datetime_object = datetime.strptime(match.groupdict()['date'], '%d/%m/%y')
+                        datetime_object = datetime.strptime(match.groupdict()['date'], '%y/%m/%d')
                         date_finalstring = '%y/%m/%d'
                         month = 'feild2'
                         day = 'feild1'
