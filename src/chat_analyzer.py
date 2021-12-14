@@ -158,59 +158,49 @@ def import_data(path_to_chatfile: str) -> List[Dict[str, Any]]:
     if isWa:
         print('Whatsapp chat recognized')
         f.seek(0)
-        #To check the dateformats
-        formatdmy = 1
-        formatmdy = 1
-        formatymd = 1
+        date_finalstring = None
         #To check that the date formats in the chat are in which format
-        #Can also check the time format here itself...
         for line in f:
             match = re.search(WMsg, line)
             if match:
                 try:
                     datetime_object = datetime.strptime(match.groupdict()['date'], '%m/%d/%y')
+                    date_string = '%m/%d/%y'
+                    month = 'feild1'
+                    day = 'feild2'
+                    year = 'feild3'
                 except:
-                    formatmdy = 0
-                try:
-                    datetime_object = datetime.strptime(match.groupdict()['date'], '%d/%m/%y')
-                except:
-                    formatdmy = 0
-                try:
-                    datetime_object = datetime.strptime(match.groupdict()['date'], '%y/%m/%d')
-                except:
-                    formatymd = 0    
+                    try:
+                        # If above case is failed,There is chance that this case will also fail.
+                        # Hence we should continue the loop
+                        datetime_object = datetime.strptime(match.groupdict()['date'], '%d/%m/%y')
+                        date_finalstring = '%d/%m/%y'
+                        month = 'feild2'
+                        day = 'feild1'
+                        year = 'feild3'
+                    except:
+                        # If above two cases are failed,String and fields are fixed.
+                        # Hence there is no point in continuing the loop
+                        datetime_object = datetime.strptime(match.groupdict()['date'], '%d/%m/%y')
+                        date_finalstring = '%y/%m/%d'
+                        month = 'feild2'
+                        day = 'feild1'
+                        year = 'feild3'
+                        break
+        # If all lines in the chat satisfies the format m/d/y, therefore assign the string to the final string
+        if date_finalstring is None :
+            date_finalstring = date_string
+
         f.seek(0)
         for line in f:
             match = re.search(WMsg, line)
-            if match and formatmdy:
+            if match: 
                 msgs.append({
                     'username': match.groupdict()['username'],
-                    'date': datetime.strptime(match.groupdict()['date'], '%m/%d/%y').date(),
-                    'month': match.groupdict()['feild1'],
-                    'day': match.groupdict()['feild2'],
-                    'year': match.groupdict()['feild3'],
-                    'time': datetime.strptime(match.groupdict()['time'], '%H:%M').time(),
-                    'hour': match.groupdict()['hour'],
-                    'minute': match.groupdict()['minute'],
-                })
-            elif match and formatdmy:
-                msgs.append({
-                    'username': match.groupdict()['username'],
-                    'date': datetime.strptime(match.groupdict()['date'], '%d/%m/%y').date(),
-                    'month': match.groupdict()['feild2'],
-                    'day': match.groupdict()['feild1'],
-                    'year': match.groupdict()['feild3'],
-                    'time': datetime.strptime(match.groupdict()['time'], '%H:%M').time(),
-                    'hour': match.groupdict()['hour'],
-                    'minute': match.groupdict()['minute'],
-                })
-            elif match and formatymd:
-                msgs.append({
-                    'username': match.groupdict()['username'],
-                    'date': datetime.strptime(match.groupdict()['date'], '%y/%m/%d').date(),
-                    'month': match.groupdict()['feild2'],
-                    'day': match.groupdict()['feild3'],
-                    'year': match.groupdict()['feild1'],
+                    'date':  datetime.strptime(match.groupdict()['date'], date_finalstring).date(),
+                    'month': match.groupdict()[month],
+                    'day': match.groupdict()[day],
+                    'year': match.groupdict()[year],
                     'time': datetime.strptime(match.groupdict()['time'], '%H:%M').time(),
                     'hour': match.groupdict()['hour'],
                     'minute': match.groupdict()['minute'],
