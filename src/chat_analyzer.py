@@ -197,7 +197,7 @@ def import_data(path_to_chatfile: str) -> List[Dict[str, Any]]:
             if match: 
                 msgs.append({
                     'username': match.groupdict()['username'],
-                    'date':  datetime.strptime(match.groupdict()['date'], date_finalstring).date(),
+                    'date': datetime.strptime(match.groupdict()['date'], date_finalstring).date(),
                     'month': match.groupdict()[month],
                     'day': match.groupdict()[day],
                     'year': match.groupdict()[year],
