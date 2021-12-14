@@ -247,8 +247,9 @@ def controller(
                 plt.show()
         else:
             user_count = check_activity(msgs, username, start_date, end_date, show_graph)
-            for user in user_count:
-                print('The user {} mostly stays active around {} Hours'.format(user, user_count[user]['max']))
+            users_act = [["User", "Hours Active"]]
+            for user in user_count: users_act.append([user, user_count[user]['max']])
+            print(tabulate(users_act, headers='firstrow', tablefmt='fancy_grid', colalign=('center', 'center'), floatfmt='.4f'))
             # For Graph
             if show_graph and globals.CAN_SHOW_GRAPH:
                 print('\nShowing graph')
