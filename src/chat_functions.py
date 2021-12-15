@@ -160,6 +160,7 @@ def check_activity(
     else:
         return user_count
 
+
 def interaction_curve_func(
         msgs: List[Dict[str, Any]], username: str = None,
         start_date: datetime = None, end_date: datetime = None, show_graph: bool = False) -> None:

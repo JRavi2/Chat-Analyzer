@@ -233,7 +233,9 @@ def controller(
     if activity:
         if username:
             list_activity, list_graph = check_activity(msgs, username, start_date, end_date, show_graph)
+
             print('The user {} mostly stays active around {} Hours'.format(list_activity[0], list_activity[1]))
+
             if show_graph and globals.CAN_SHOW_GRAPH:
                 print('\nShowing graph....')
                 plt.plot(list_graph[0], list_graph[1])
@@ -248,27 +250,32 @@ def controller(
         else:
             user_count = check_activity(msgs, username, start_date, end_date, show_graph)
             users_act = [["User", "Hours Active"]]
-            for user in user_count: users_act.append([user, user_count[user]['max']])
-            print(tabulate(users_act, headers='firstrow', tablefmt='fancy_grid', colalign=('center', 'center'), floatfmt='.4f'))
+
+            for user in user_count:
+                users_act.append([user, user_count[user]['max']])
+
+            print(tabulate(users_act, headers='firstrow', tablefmt='fancy_grid',
+                           colalign=('center', 'center'), floatfmt='.4f'))
+
             # For Graph
             if show_graph and globals.CAN_SHOW_GRAPH:
                 print('\nShowing graph')
-            for user in user_count:
-                hours = np.arange(24)
-                counts = [0]*24
-                for hour, count in user_count[user].items():
-                    if hour != 'max':
-                        counts[int(hour)] = count
-                plt.plot(hours, counts, label=user)
-            hours = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11',
-                     '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23']
-            plt.xticks(ticks=np.arange(24), labels=hours)
-            plt.tight_layout()
-            plt.legend()
-            plt.xlabel('Time of day (in Hours)')
-            plt.ylabel('Message Count')
-            plt.title('Activity of each user')
-            plt.show()
+                for user in user_count:
+                    hours = np.arange(24)
+                    counts = [0]*24
+                    for hour, count in user_count[user].items():
+                        if hour != 'max':
+                            counts[int(hour)] = count
+                    plt.plot(hours, counts, label=user)
+                hours = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11',
+                         '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23']
+                plt.xticks(ticks=np.arange(24), labels=hours)
+                plt.tight_layout()
+                plt.legend()
+                plt.xlabel('Time of day (in Hours)')
+                plt.ylabel('Message Count')
+                plt.title('Activity of each user')
+                plt.show()
 
     if interaction_curve:
         slope_sign_pred, str_dates, x, y, y_pred, dates = interaction_curve_func(
@@ -277,7 +284,8 @@ def controller(
             'Your' if username else 'The',
             'decreased' if slope_sign_pred < 0 else 'increased'
         ))
-        #Graph
+
+        # For Graph
         if show_graph and globals.CAN_SHOW_GRAPH:
             print('Showing graph....')
             plt.plot(x, y, 'o', color='black')  # The point plot
@@ -289,7 +297,6 @@ def controller(
             plt.ylabel('Message count')
             plt.title('Regression curve for interactions (no. of messages) in the chat')
             plt.show()
-
 
     if export:
         export_data(msgs, export_path)
