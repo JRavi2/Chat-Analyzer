@@ -91,14 +91,25 @@ Program Finished'''
     def test_activity_all(self):
         runner = CliRunner()
         res = runner.invoke(controller, ['test_chats/wa.txt', '-a'])
-        expected_res = '''The user A mostly stays active around 15 Hours
-The user B mostly stays active around 15 Hours
-The user C mostly stays active around 15 Hours
-The user D mostly stays active around 15 Hours
-The user E mostly stays active around 15 Hours
-The user F mostly stays active around 14 Hours
-The user G mostly stays active around 18 Hours
-The user H mostly stays active around 21 Hours
+        expected_res = '''╒════════╤════════════════╕
+│  User  │  Hours Active  │
+╞════════╪════════════════╡
+│   A    │       15       │
+├────────┼────────────────┤
+│   B    │       15       │
+├────────┼────────────────┤
+│   C    │       15       │
+├────────┼────────────────┤
+│   D    │       15       │
+├────────┼────────────────┤
+│   E    │       15       │
+├────────┼────────────────┤
+│   F    │       14       │
+├────────┼────────────────┤
+│   G    │       18       │
+├────────┼────────────────┤
+│   H    │       21       │
+╘════════╧════════════════╛
 Program Finished'''
         assert expected_res == res.output[:res.output[:-1].rfind('\n')]
 
@@ -221,18 +232,33 @@ Program Finished'''
         runner = CliRunner()
         res = runner.invoke(controller, ['test_chats/sg.md', '-a'])
         expected_res = '''Signal chat recognized
-The user A mostly stays active around 13 Hours
-The user B mostly stays active around 13 Hours
-The user C mostly stays active around 20 Hours
-The user D mostly stays active around 14 Hours
-The user E mostly stays active around 14 Hours
-The user F mostly stays active around 13 Hours
-The user G mostly stays active around 20 Hours
-The user H mostly stays active around 13 Hours
-The user I mostly stays active around 13 Hours
-The user J mostly stays active around 23 Hours
-The user K mostly stays active around 20 Hours
-The user L mostly stays active around 23 Hours
+╒════════╤════════════════╕
+│  User  │  Hours Active  │
+╞════════╪════════════════╡
+│   A    │       13       │
+├────────┼────────────────┤
+│   B    │       13       │
+├────────┼────────────────┤
+│   C    │       20       │
+├────────┼────────────────┤
+│   D    │       14       │
+├────────┼────────────────┤
+│   E    │       14       │
+├────────┼────────────────┤
+│   F    │       13       │
+├────────┼────────────────┤
+│   G    │       20       │
+├────────┼────────────────┤
+│   H    │       13       │
+├────────┼────────────────┤
+│   I    │       13       │
+├────────┼────────────────┤
+│   J    │       23       │
+├────────┼────────────────┤
+│   K    │       20       │
+├────────┼────────────────┤
+│   L    │       23       │
+╘════════╧════════════════╛
 Program Finished'''
         assert expected_res == res.output[:res.output[:-1].rfind('\n')]
 
