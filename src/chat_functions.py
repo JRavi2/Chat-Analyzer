@@ -1,7 +1,6 @@
 from datetime import datetime
 from typing import Any, Dict, List, Tuple
 
-import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.linear_model import LinearRegression
 
@@ -148,47 +147,18 @@ def check_activity(
         user_count[user]['max'] = max_freq_hour
 
     if username:
-        print('The user {} mostly stays active around {} Hours'.format(username, user_count[username]['max']))
-
-        # For Graph
+        res = [username, user_count[username]['max']]
+        list1 = []
         if show_graph and globals.CAN_SHOW_GRAPH:
-            print('\nShowing graph....')
             hours = np.arange(24)
             counts = [0]*24
             for hour, count in user_count[username].items():
                 if hour != 'max':
                     counts[int(hour)] = count
-            plt.plot(hours, counts)
-            hours = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11',
-                     '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23']
-            plt.xticks(ticks=np.arange(24), labels=globals.HOURS_LIST)
-            plt.tight_layout()
-            plt.xlabel('Time of day (in Hours)')
-            plt.ylabel('Message Count')
-            plt.title('Activity of each user')
-            plt.show()
+            list1 = [hours, counts]
+        return res, list1
     else:
-        for user in user_count:
-            print('The user {} mostly stays active around {} Hours'.format(user, user_count[user]['max']))
-
-        # For Graph
-        if show_graph and globals.CAN_SHOW_GRAPH:
-            print('\nShowing graph....')
-
-            for user in user_count:
-                hours = np.arange(24)
-                counts = [0]*24
-                for hour, count in user_count[user].items():
-                    if hour != 'max':
-                        counts[int(hour)] = count
-                plt.plot(hours, counts, label=user)
-            plt.xticks(ticks=np.arange(24), labels=globals.HOURS_LIST)
-            plt.tight_layout()
-            plt.legend()
-            plt.xlabel('Time of day (in Hours)')
-            plt.ylabel('Message Count')
-            plt.title('Activity of each user')
-            plt.show()
+        return user_count
 
 
 def interaction_curve_func(
@@ -227,21 +197,4 @@ def interaction_curve_func(
     linear_regressor.fit(x, y)
     y_pred = linear_regressor.predict(x)
     slope_sign_pred = (y_pred[1][0] - y_pred[0][0]) / abs(y_pred[1][0] - y_pred[0][0])
-
-    print('{} interactions in this chat have {}!'.format(
-        'Your' if username else 'The',
-        'decreased' if slope_sign_pred < 0 else 'increased'
-    ))
-
-    # For Graph
-    if show_graph and globals.CAN_SHOW_GRAPH:
-        print('Showing graph....')
-        plt.plot(x, y, 'o', color='black')  # The point plot
-        plt.plot(x, y_pred, color='red')  # The line plot
-        plt.xticks(ticks=dates, labels=str_dates, rotation=45)
-        plt.locator_params(axis='x', nbins=10)
-        plt.tight_layout()
-        plt.xlabel('Date')
-        plt.ylabel('Message count')
-        plt.title('Regression curve for interactions (no. of messages) in the chat')
-        plt.show()
+    return slope_sign_pred, str_dates, x, y, y_pred, dates
