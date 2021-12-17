@@ -239,9 +239,9 @@ def controller(
             if show_graph and globals.CAN_SHOW_GRAPH:
                 print('\nShowing graph....')
                 plt.plot(list_graph[0], list_graph[1])
-                hours = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11',
-                         '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23']
-                plt.xticks(ticks=np.arange(24), labels=hours)
+                #hours = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11',
+                #         '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23']
+                plt.xticks(ticks=np.arange(24), labels=globals.hours_list)
                 plt.tight_layout()
                 plt.xlabel('Time of day (in Hours)')
                 plt.ylabel('Message Count')
@@ -267,9 +267,9 @@ def controller(
                         if hour != 'max':
                             counts[int(hour)] = count
                     plt.plot(hours, counts, label=user)
-                hours = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11',
-                         '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23']
-                plt.xticks(ticks=np.arange(24), labels=hours)
+                #hours = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11',
+                #         '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23']
+                plt.xticks(ticks=np.arange(24), labels=globals.hours_list)
                 plt.tight_layout()
                 plt.legend()
                 plt.xlabel('Time of day (in Hours)')
