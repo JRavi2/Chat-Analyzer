@@ -14,40 +14,27 @@ class Test_WA:
         runner = CliRunner()
         res = runner.invoke(controller, ['test_chats/wa.txt', '-p'])
         expected_res = '''Whatsapp chat recognized
-Total Count: 39939
+Total No. of Messages: 39939
 
-For the user A
-Message Count: 6872
-Percentage: 17.206239515260773
-
-For the user B
-Message Count: 7012
-Percentage: 17.55677408047272
-
-For the user C
-Message Count: 9260
-Percentage: 23.18535767044743
-
-For the user D
-Message Count: 8518
-Percentage: 21.327524474824106
-
-For the user E
-Message Count: 6456
-Percentage: 16.1646510929167
-
-For the user F
-Message Count: 1776
-Percentage: 4.446781341545857
-
-For the user G
-Message Count: 44
-Percentage: 0.11016800620946944
-
-For the user H
-Message Count: 1
-Percentage: 0.0025038183229424875
-
+╒════════════╤═════════════════╤══════════════╕
+│  Username  │  Message Count  │  Percentage  │
+╞════════════╪═════════════════╪══════════════╡
+│     A      │      6872       │   17.2062    │
+├────────────┼─────────────────┼──────────────┤
+│     B      │      7012       │   17.5568    │
+├────────────┼─────────────────┼──────────────┤
+│     C      │      9260       │   23.1854    │
+├────────────┼─────────────────┼──────────────┤
+│     D      │      8518       │   21.3275    │
+├────────────┼─────────────────┼──────────────┤
+│     E      │      6456       │   16.1647    │
+├────────────┼─────────────────┼──────────────┤
+│     F      │      1776       │    4.4468    │
+├────────────┼─────────────────┼──────────────┤
+│     G      │       44        │    0.1102    │
+├────────────┼─────────────────┼──────────────┤
+│     H      │        1        │    0.0025    │
+╘════════════╧═════════════════╧══════════════╛
 Program Finished'''
         assert expected_res == res.output[:res.output[:-1].rfind('\n')]
 
@@ -56,10 +43,13 @@ Program Finished'''
         runner = CliRunner()
         res = runner.invoke(controller, ['test_chats/wa.txt', '-p', '-u', 'A'])
         expected_res = '''Whatsapp chat recognized
-Total Count: 39939
+Total No. of Messages: 39939
 
-Message Count: 6872
-Percentage: 17.206239515260773
+╒════════════╤═════════════════╤══════════════╕
+│  Username  │  Message Count  │  Percentage  │
+╞════════════╪═════════════════╪══════════════╡
+│     A      │      6872       │   17.2062    │
+╘════════════╧═════════════════╧══════════════╛
 Program Finished'''
         assert expected_res == res.output[:res.output[:-1].rfind('\n')]
 
@@ -68,13 +58,23 @@ Program Finished'''
         runner = CliRunner()
         res = runner.invoke(controller, ['test_chats/wa.txt', '-cS'])
         expected_res = '''Whatsapp chat recognized
-The user C started conversation 255 time(s)
-The user E started conversation 159 time(s)
-The user A started conversation 302 time(s)
-The user D started conversation 283 time(s)
-The user B started conversation 187 time(s)
-The user F started conversation 89 time(s)
-The user G started conversation 4 time(s)
+╒════════╤═════════╕
+│  User  │  Count  │
+╞════════╪═════════╡
+│   C    │   255   │
+├────────┼─────────┤
+│   E    │   159   │
+├────────┼─────────┤
+│   A    │   302   │
+├────────┼─────────┤
+│   D    │   283   │
+├────────┼─────────┤
+│   B    │   187   │
+├────────┼─────────┤
+│   F    │   89    │
+├────────┼─────────┤
+│   G    │    4    │
+╘════════╧═════════╛
 Program Finished'''
         assert expected_res == res.output[:res.output[:-1].rfind('\n')]
 
@@ -83,7 +83,11 @@ Program Finished'''
         runner = CliRunner()
         res = runner.invoke(controller, ['test_chats/wa.txt', '-cS', '-u', 'A'])
         expected_res = '''Whatsapp chat recognized
-The user A started conversation 302 time(s)
+╒════════╤═════════╕
+│  User  │  Count  │
+╞════════╪═════════╡
+│   A    │   302   │
+╘════════╧═════════╛
 Program Finished'''
         assert expected_res == res.output[:res.output[:-1].rfind('\n')]
 
@@ -92,14 +96,25 @@ Program Finished'''
         runner = CliRunner()
         res = runner.invoke(controller, ['test_chats/wa.txt', '-a'])
         expected_res = '''Whatsapp chat recognized
-The user A mostly stays active around 15 Hours
-The user B mostly stays active around 15 Hours
-The user C mostly stays active around 15 Hours
-The user D mostly stays active around 15 Hours
-The user E mostly stays active around 15 Hours
-The user F mostly stays active around 14 Hours
-The user G mostly stays active around 18 Hours
-The user H mostly stays active around 21 Hours
+╒════════╤════════════════╕
+│  User  │  Hours Active  │
+╞════════╪════════════════╡
+│   A    │       15       │
+├────────┼────────────────┤
+│   B    │       15       │
+├────────┼────────────────┤
+│   C    │       15       │
+├────────┼────────────────┤
+│   D    │       15       │
+├────────┼────────────────┤
+│   E    │       15       │
+├────────┼────────────────┤
+│   F    │       14       │
+├────────┼────────────────┤
+│   G    │       18       │
+├────────┼────────────────┤
+│   H    │       21       │
+╘════════╧════════════════╛
 Program Finished'''
         assert expected_res == res.output[:res.output[:-1].rfind('\n')]
 
@@ -138,56 +153,35 @@ class Test_SG:
         runner = CliRunner()
         res = runner.invoke(controller, ['test_chats/sg.md', '-p'])
         expected_res = '''Signal chat recognized
-Total Count: 415
+Total No. of Messages: 415
 
-For the user A
-Message Count: 27
-Percentage: 6.506024096385541
-
-For the user B
-Message Count: 24
-Percentage: 5.783132530120482
-
-For the user C
-Message Count: 10
-Percentage: 2.4096385542168677
-
-For the user D
-Message Count: 32
-Percentage: 7.710843373493977
-
-For the user E
-Message Count: 35
-Percentage: 8.433734939759036
-
-For the user F
-Message Count: 115
-Percentage: 27.710843373493976
-
-For the user G
-Message Count: 28
-Percentage: 6.746987951807229
-
-For the user H
-Message Count: 2
-Percentage: 0.48192771084337355
-
-For the user I
-Message Count: 9
-Percentage: 2.1686746987951806
-
-For the user J
-Message Count: 32
-Percentage: 7.710843373493977
-
-For the user K
-Message Count: 70
-Percentage: 16.867469879518072
-
-For the user L
-Message Count: 31
-Percentage: 7.46987951807229
-
+╒════════════╤═════════════════╤══════════════╕
+│  Username  │  Message Count  │  Percentage  │
+╞════════════╪═════════════════╪══════════════╡
+│     A      │       27        │    6.5060    │
+├────────────┼─────────────────┼──────────────┤
+│     B      │       24        │    5.7831    │
+├────────────┼─────────────────┼──────────────┤
+│     C      │       10        │    2.4096    │
+├────────────┼─────────────────┼──────────────┤
+│     D      │       32        │    7.7108    │
+├────────────┼─────────────────┼──────────────┤
+│     E      │       35        │    8.4337    │
+├────────────┼─────────────────┼──────────────┤
+│     F      │       115       │   27.7108    │
+├────────────┼─────────────────┼──────────────┤
+│     G      │       28        │    6.7470    │
+├────────────┼─────────────────┼──────────────┤
+│     H      │        2        │    0.4819    │
+├────────────┼─────────────────┼──────────────┤
+│     I      │        9        │    2.1687    │
+├────────────┼─────────────────┼──────────────┤
+│     J      │       32        │    7.7108    │
+├────────────┼─────────────────┼──────────────┤
+│     K      │       70        │   16.8675    │
+├────────────┼─────────────────┼──────────────┤
+│     L      │       31        │    7.4699    │
+╘════════════╧═════════════════╧══════════════╛
 Program Finished'''
         assert expected_res == res.output[:res.output[:-1].rfind('\n')]
 
@@ -195,10 +189,13 @@ Program Finished'''
         runner = CliRunner()
         res = runner.invoke(controller, ['test_chats/sg.md', '-p', '-u', 'A'])
         expected_res = '''Signal chat recognized
-Total Count: 415
+Total No. of Messages: 415
 
-Message Count: 27
-Percentage: 6.506024096385541
+╒════════════╤═════════════════╤══════════════╕
+│  Username  │  Message Count  │  Percentage  │
+╞════════════╪═════════════════╪══════════════╡
+│     A      │       27        │    6.5060    │
+╘════════════╧═════════════════╧══════════════╛
 Program Finished'''
         assert expected_res == res.output[:res.output[:-1].rfind('\n')]
 
@@ -207,12 +204,21 @@ Program Finished'''
         runner = CliRunner()
         res = runner.invoke(controller, ['test_chats/sg.md', '-cS'])
         expected_res = '''Signal chat recognized
-The user F started conversation 4 time(s)
-The user D started conversation 2 time(s)
-The user E started conversation 2 time(s)
-The user B started conversation 1 time(s)
-The user A started conversation 1 time(s)
-The user K started conversation 2 time(s)
+╒════════╤═════════╕
+│  User  │  Count  │
+╞════════╪═════════╡
+│   F    │    4    │
+├────────┼─────────┤
+│   D    │    2    │
+├────────┼─────────┤
+│   E    │    2    │
+├────────┼─────────┤
+│   B    │    1    │
+├────────┼─────────┤
+│   A    │    1    │
+├────────┼─────────┤
+│   K    │    2    │
+╘════════╧═════════╛
 Program Finished'''
         assert expected_res == res.output[:res.output[:-1].rfind('\n')]
 
@@ -221,7 +227,11 @@ Program Finished'''
         runner = CliRunner()
         res = runner.invoke(controller, ['test_chats/sg.md', '-cS', '-u', 'A'])
         expected_res = '''Signal chat recognized
-The user A started conversation 1 time(s)
+╒════════╤═════════╕
+│  User  │  Count  │
+╞════════╪═════════╡
+│   A    │    1    │
+╘════════╧═════════╛
 Program Finished'''
         assert expected_res == res.output[:res.output[:-1].rfind('\n')]
 
@@ -230,18 +240,33 @@ Program Finished'''
         runner = CliRunner()
         res = runner.invoke(controller, ['test_chats/sg.md', '-a'])
         expected_res = '''Signal chat recognized
-The user A mostly stays active around 13 Hours
-The user B mostly stays active around 13 Hours
-The user C mostly stays active around 20 Hours
-The user D mostly stays active around 14 Hours
-The user E mostly stays active around 14 Hours
-The user F mostly stays active around 13 Hours
-The user G mostly stays active around 20 Hours
-The user H mostly stays active around 13 Hours
-The user I mostly stays active around 13 Hours
-The user J mostly stays active around 23 Hours
-The user K mostly stays active around 20 Hours
-The user L mostly stays active around 23 Hours
+╒════════╤════════════════╕
+│  User  │  Hours Active  │
+╞════════╪════════════════╡
+│   A    │       13       │
+├────────┼────────────────┤
+│   B    │       13       │
+├────────┼────────────────┤
+│   C    │       20       │
+├────────┼────────────────┤
+│   D    │       14       │
+├────────┼────────────────┤
+│   E    │       14       │
+├────────┼────────────────┤
+│   F    │       13       │
+├────────┼────────────────┤
+│   G    │       20       │
+├────────┼────────────────┤
+│   H    │       13       │
+├────────┼────────────────┤
+│   I    │       13       │
+├────────┼────────────────┤
+│   J    │       23       │
+├────────┼────────────────┤
+│   K    │       20       │
+├────────┼────────────────┤
+│   L    │       23       │
+╘════════╧════════════════╛
 Program Finished'''
         assert expected_res == res.output[:res.output[:-1].rfind('\n')]
 

@@ -4,12 +4,15 @@ from datetime import datetime
 from json import JSONDecodeError
 from time import time
 from typing import Any, Dict, List
+import matplotlib.pyplot as plt
+import numpy as np
 
 import click
+from tabulate import tabulate
 
 import globals
 from chat_functions import (
-    calc_percentage, check_activity, find_conv_starters, interaction_curve_func
+    calc_percentage, check_activity, find_conv_starters, interaction_curve_func, generate_graph_precentages
 )
 
 # Initialize the globals
@@ -113,6 +116,13 @@ def import_data(path_to_chatfile: str) -> List[Dict[str, Any]]:
     # Not a JSON file, so can't be a Telegram or self exported file, check for other types
     except JSONDecodeError:
         pass
+    except KeyError:
+        try:
+            f.seek(0)
+            msgs = json.load(f)['messages']
+            return msgs
+        except KeyError:
+            pass
 
     # Signal Export
     f.seek(0)
@@ -228,17 +238,91 @@ def controller(
         end_date = None
 
     if conv_starters:
-        find_conv_starters(msgs, username)
+        table_data = find_conv_starters(msgs, username)
+        print(tabulate(table_data, headers='firstrow', tablefmt='fancy_grid',
+              colalign=('center', 'center'), floatfmt='.4f'))
 
     if percentage:
-        calc_percentage(msgs, username, start_date, end_date, show_graph)
+        table_data, total_count = calc_percentage(msgs, username, start_date, end_date, show_graph)
+
+        print('Total No. of Messages: {}\n'.format(total_count))
+        print(tabulate(table_data, headers='firstrow', tablefmt='fancy_grid',
+              colalign=('center', 'center', 'center'), floatfmt='.4f'))
+
+        # For Graph
+        if show_graph and globals.CAN_SHOW_GRAPH:
+            print('\nShowing graph....')
+            users, percs = generate_graph_precentages(table_data[1:])
+            plt.pie(x=percs, autopct='%1.1f%%', shadow=True, startangle=90)
+            plt.axis('equal')
+            plt.legend(users)
+            plt.tight_layout()
+            plt.title('Percentage contribution of each user in the chat')
+            plt.show()
 
     if activity:
-        check_activity(msgs, username, start_date, end_date, show_graph)
+        if username:
+            list_activity, list_graph = check_activity(msgs, username, start_date, end_date, show_graph)
+
+            print('The user {} mostly stays active around {} Hours'.format(list_activity[0], list_activity[1]))
+
+            if show_graph and globals.CAN_SHOW_GRAPH:
+                print('\nShowing graph....')
+                plt.plot(list_graph[0], list_graph[1])
+                plt.xticks(ticks=np.arange(24), labels=globals.HOURS_LIST)
+                plt.tight_layout()
+                plt.xlabel('Time of day (in Hours)')
+                plt.ylabel('Message Count')
+                plt.title('Activity of each user')
+                plt.show()
+        else:
+            user_count = check_activity(msgs, username, start_date, end_date, show_graph)
+            users_act = [["User", "Hours Active"]]
+
+            for user in user_count:
+                users_act.append([user, user_count[user]['max']])
+
+            print(tabulate(users_act, headers='firstrow', tablefmt='fancy_grid',
+                           colalign=('center', 'center'), floatfmt='.4f'))
+
+            # For Graph
+            if show_graph and globals.CAN_SHOW_GRAPH:
+                print('\nShowing graph')
+                for user in user_count:
+                    hours = np.arange(24)
+                    counts = [0]*24
+                    for hour, count in user_count[user].items():
+                        if hour != 'max':
+                            counts[int(hour)] = count
+                    plt.plot(hours, counts, label=user)
+                plt.xticks(ticks=np.arange(24), labels=globals.HOURS_LIST)
+                plt.tight_layout()
+                plt.legend()
+                plt.xlabel('Time of day (in Hours)')
+                plt.ylabel('Message Count')
+                plt.title('Activity of each user')
+                plt.show()
 
     if interaction_curve:
-        interaction_curve_func(
+        slope_sign_pred, str_dates, x, y, y_pred, dates = interaction_curve_func(
             msgs, username=username, start_date=start_date, end_date=end_date, show_graph=show_graph)
+        print('{} interactions in this chat have {}!'.format(
+            'Your' if username else 'The',
+            'decreased' if slope_sign_pred < 0 else 'increased'
+        ))
+
+        # For Graph
+        if show_graph and globals.CAN_SHOW_GRAPH:
+            print('Showing graph....')
+            plt.plot(x, y, 'o', color='black')  # The point plot
+            plt.plot(x, y_pred, color='red')  # The line plot
+            plt.xticks(ticks=dates, labels=str_dates, rotation=45)
+            plt.locator_params(axis='x', nbins=10)
+            plt.tight_layout()
+            plt.xlabel('Date')
+            plt.ylabel('Message count')
+            plt.title('Regression curve for interactions (no. of messages) in the chat')
+            plt.show()
 
     if export:
         export_data(msgs, export_path)
