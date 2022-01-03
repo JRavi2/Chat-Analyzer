@@ -24,9 +24,9 @@ Define Regex Patterns
 # For Whatsapp chat exports
 WUser = r'(- (?P<username>[^:]*):)'  # To get the user's name
 # To get the date
-WDate = r'(?P<date>(?P<month>[0-9]{1,2})[-\/]{1}(?P<day>[0-9]{1,2})[-\/]{1}(?P<year>[0-9]{2}))'
+WDate = r'(?P<date>(?P<feild1>[0-9]{1,4})[-\/]{1}(?P<feild2>[0-9]{1,2})[-\/]{1}(?P<feild3>[0-9]{1,4}))'
 # To get the time
-WTime = r'(, (?P<time>(?P<hour>[0-9]{2}):(?P<minute>[0-9]{2})) )'
+WTime = r'(, (?P<time>(?P<hour>[0-9]{1,2}):(?P<minute>[0-9]{2})) )'
 # Finally to get the parsed message
 WMsg = WDate + WTime + WUser + r'(?P<message>.*)'
 
@@ -168,15 +168,49 @@ def import_data(path_to_chatfile: str) -> List[Dict[str, Any]]:
     if isWa:
         print('Whatsapp chat recognized')
         f.seek(0)
+        date_finalstring = None
+        #To check that the date formats in the chat are in which format
         for line in f:
             match = re.search(WMsg, line)
             if match:
+                try:
+                    datetime_object = datetime.strptime(match.groupdict()['date'], '%m/%d/%y')
+                    date_string = '%m/%d/%y'
+                    month = 'feild1'
+                    day = 'feild2'
+                    year = 'feild3'
+                except:
+                    try:
+                        # If above case is failed,There is chance that this case will also fail.
+                        # Hence we should continue the loop
+                        datetime_object = datetime.strptime(match.groupdict()['date'], '%d/%m/%y')
+                        date_finalstring = '%d/%m/%y'
+                        month = 'feild2'
+                        day = 'feild1'
+                        year = 'feild3'
+                    except:
+                        # If above two cases are failed,String and fields are fixed.
+                        # Hence there is no point in continuing the loop
+                        datetime_object = datetime.strptime(match.groupdict()['date'], '%y/%m/%d')
+                        date_finalstring = '%y/%m/%d'
+                        month = 'feild2'
+                        day = 'feild3'
+                        year = 'feild1'
+                        break
+        # If all lines in the chat satisfies the format m/d/y, therefore assign the string to the final string
+        if date_finalstring is None :
+            date_finalstring = date_string
+
+        f.seek(0)
+        for line in f:
+            match = re.search(WMsg, line)
+            if match: 
                 msgs.append({
                     'username': match.groupdict()['username'],
-                    'date': datetime.strptime(match.groupdict()['date'], '%m/%d/%y').date(),
-                    'month': match.groupdict()['month'],
-                    'day': match.groupdict()['day'],
-                    'year': match.groupdict()['year'],
+                    'date': datetime.strptime(match.groupdict()['date'], date_finalstring).date(),
+                    'month': match.groupdict()[month],
+                    'day': match.groupdict()[day],
+                    'year': match.groupdict()[year],
                     'time': datetime.strptime(match.groupdict()['time'], '%H:%M').time(),
                     'hour': match.groupdict()['hour'],
                     'minute': match.groupdict()['minute'],
